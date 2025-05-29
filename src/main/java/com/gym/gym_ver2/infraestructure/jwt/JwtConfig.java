@@ -1,14 +1,16 @@
 package com.gym.gym_ver2.infraestructure.jwt;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 public class JwtConfig {
+
     @Value("${SECRET_KEY}")
-    private String secreteKey;
+    private String secretKey;
 
     public String getSecretKey() {
-        return secreteKey;
+        return secretKey;
     }
 }
+

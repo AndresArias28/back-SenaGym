@@ -4,7 +4,6 @@ package com.gym.gym_ver2.infraestructure.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -17,11 +16,20 @@ import java.util.stream.Collectors;
 @Service//interfaz que carga los datos específicos del usuario. Servicio que se encarga de la creacion y validacion de los tokens
 public class JwtService {
 
-    @Autowired private JwtConfig jwtConfig; // Inyección de dependencias para obtener la clave secreta desde la configuración
+    private final JwtConfig jwtConfig;// Configuración del JWT, contiene la clave secreta
+
+    public JwtService(JwtConfig jwtConfig) {//  recibe la configuración del JWT
+        this.jwtConfig = jwtConfig;
+    }
+
+    public String getClave() {// obtener la clave secreta del JWT
+        return jwtConfig.getSecretKey();
+    }
 
     public String createToken(UserDetails usuario) {
         return generateToken(new HashMap<>(), usuario);
     }
+
     // Crear un token con información adicional
     public String generateToken(Map<String, Object> extraClaims, UserDetails user) {
 
@@ -42,7 +50,7 @@ public class JwtService {
     
     // Obtener la clave secreta en formato Key
     public  Key getKey() {
-        byte[] secretEncode = Decoders.BASE64.decode(jwtConfig.getSecretKey()); // Decodificar la clave secreta en base64
+        byte[] secretEncode = Decoders.BASE64.decode(this.getClave()); // Decodificar la clave secreta en base64
         if (secretEncode.length < 32) {
             throw new IllegalArgumentException("La clave secreta debe tener al menos 32 bytes (256 bits) después de decodificarla.");
         }
@@ -85,7 +93,6 @@ public class JwtService {
         } catch (Exception e) {
             throw new RuntimeException("Error al verificar la expiración del token.", e);
         }
-
     }
 
 }
