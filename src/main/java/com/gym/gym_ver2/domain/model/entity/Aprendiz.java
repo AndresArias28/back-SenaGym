@@ -27,12 +27,6 @@ public class Aprendiz extends Persona {
     @Column(name = "peso")
     private BigDecimal peso;
 
-    @Column(name = "puntos_acumulados")
-    private Integer puntosAcumulados;
-
-    @Column(name = "horas_acumuladas")
-    private Integer horasAcumuladas;
-
     @Column(name = "nivel_fisico")
     private String nivelFisico;
 

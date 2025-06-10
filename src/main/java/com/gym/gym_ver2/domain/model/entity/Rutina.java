@@ -18,7 +18,7 @@ public class Rutina {
     @Column(name = "id_rutina")
     private Integer idRutina;
 
-    @OneToMany(mappedBy = "idRutina", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "rutina", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RutinaEjercicio> rutinaEjercicios;
 
     @Column(name = "nombre_rutina")
@@ -30,6 +30,9 @@ public class Rutina {
     @Column(name = "foto_rutina")
     private String fotoRutina;
 
+    @Column(name = "puntuaje_rutina")
+    private Integer puntuajeRutina;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "dificultad")
     private Dificultad dificultad;
@@ -37,5 +40,8 @@ public class Rutina {
     @Enumerated(EnumType.STRING)
     @Column(name = "enfoque")
     private Enfoque enfoque;
+
+    @Column(name = "calorias_totales")
+    private Integer caloriasTotales;
 
 }

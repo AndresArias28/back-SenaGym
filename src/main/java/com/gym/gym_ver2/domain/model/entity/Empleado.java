@@ -18,4 +18,7 @@ public class Empleado extends Persona {
     @Column(name = "codigo_qr")
     private String codigoQr;
 
+    @Column(name = "cargo")
+    private String cargo;
+
 }

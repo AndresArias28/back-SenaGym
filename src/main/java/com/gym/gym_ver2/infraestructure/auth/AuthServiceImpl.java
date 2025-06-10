@@ -68,6 +68,7 @@ public class AuthServiceImpl implements  AuthService {
     }
 
     public AuthResponse register(RegisterRequest rq) {
+
         // Validar que el email y la contraseña no estén vacíos
         if (rq.getEmailUsuario() == null || rq.getEmailUsuario().isEmpty()) {
             throw new IllegalArgumentException("El email no puede estar vacío");
@@ -80,7 +81,7 @@ public class AuthServiceImpl implements  AuthService {
             throw new RuntimeException("El usuario ya existe");
         }
 
-        // obtener el rol desde la base de datos
+        // obtener el rol de aprendiz  desde la base de datos
         Rol rol = rolRepository.findById(3)
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
@@ -96,10 +97,10 @@ public class AuthServiceImpl implements  AuthService {
                 .jornada(rq.getJornada())
                 .estatura(rq.getEstatura())
                 .peso(rq.getPeso())
-                .puntosAcumulados(rq.getPuntosAcumulados())
-                .horasAcumuladas(rq.getHorasAcumuladas())
                 .nivelFisico(rq.getNivelFisico())
                 .build();
+
+        // Guardar el aprendiz en la base de datos
         aprendiz = aprendizRepository.save(aprendiz);
 
         Usuario usuario = Usuario.builder()// mediante el patron builder se crea un usuario con la informacion del request
@@ -110,8 +111,12 @@ public class AuthServiceImpl implements  AuthService {
                 .contrasenaUsuario(passwordEncoder.encode(rq.getContrasenaUsuario()))//codificar la contraseña
                 .fotoPerfil("default.png")//por defecto se asigna una foto de perfil
                 .estado(rq.estado)
+                .puntosAcumulados(0) // Inicializar puntos acumulados en 0
+                .horasAcumuladas(0) // Inicializar horas acumuladas en 0
                 .build();
-        userRepository.save(usuario);//guardar el usuario en la base de datos
+
+        //guardar el usuario en la base de datos
+        userRepository.save(usuario);
         System.out.println("Rol asignado: " + usuario.getIdRol().getNombreRol());
 
         return AuthResponse.builder().token(jwtService.createToken(usuario)).build();  //crear token con el usuario creado y retornar la respuesta

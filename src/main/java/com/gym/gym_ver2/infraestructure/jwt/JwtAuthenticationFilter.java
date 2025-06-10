@@ -40,10 +40,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override// se ejecuta en cada peticion
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String token = getTokenFromRequest(request);//obtener token
+        //obtener token
+        final String token = getTokenFromRequest(request);
         final String userEmail;
 
-        if (token == null) { //validar si el token es nulo
+        //validar si el token es nulo
+        if (token == null) {
             System.out.println("Token no encontrado en la solicitud");
             filterChain.doFilter(request, response);
             return;
@@ -54,21 +56,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             System.out.println("Correo del token desde el filtro: " + userEmail);
             //validar token y correo
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
+                UserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);// cargar los detalles del usuario usando el correo extraído del token
                 System.out.println("UserDetails cargado: " + userDetails.getUsername());
 
+                // Validar el token con los detalles del usuario
                 if (jwtService.validateToken(token, userDetails)) {
-                    Claims claims = Jwts.parserBuilder()// Construir el token mediante la librería Jwts
+
+                    // Construir el token mediante la librería Jwts
+                    Claims claims = Jwts.parserBuilder()
                             .setSigningKey(jwtService.getKey()) // Clave secreta usada para firmar
                             .build()
                             .parseClaimsJws(token)
                             .getBody();
 
-                    String roles = claims.get("rol", String.class); // Obtener roles como String
+                    // Obtener los roles del token
+                    String roles = claims.get("rol", String.class);
+
                     // Convertir roles en una lista de autoridades
                     List<GrantedAuthority> authorities = (roles != null) ? Collections.singletonList(new SimpleGrantedAuthority(roles)) : List.of();
                     System.out.println("Roles del token: " + roles);
                     System.out.println("Autoridades generadas filtro: " + authorities);
+
                     // Validar la url de la petición
                     if (request.getRequestURI().startsWith("/user/obtenereUsarios")) {
                         boolean esAdministrador = authorities.stream()
@@ -77,6 +85,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_Aprendiz"));
                         boolean esSuperusuario = authorities.stream()
                                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_Superusuario"));
+
                         // Validar que el usuario tenga el rol usuario para denegarle el permiso
                         if (esUsuario) {
                             System.err.println("Access Denied: Required Superusuario or admin role");
@@ -87,6 +96,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     System.out.println("userDetails.getUsername(): " + userDetails.getUsername());
                     System.out.println("userDetails.getAuthorities(): " + userDetails.getAuthorities());
 
+                    // Establecer la autenticación en el SecurityContextHolder para  el usuario autenticado
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authToken);
@@ -100,9 +110,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             System.err.println("Error al validar el token: " + e.getMessage());
         }
+        // continuar con la cadena de filtros
         filterChain.doFilter(request, response);
     }
 
+    // obtener el token del encabezado Authorization de la solicitud
     private String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);//obtener el item de autenticacion
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {

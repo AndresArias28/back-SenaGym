@@ -49,8 +49,7 @@ public class SecurityConfig { //obtener la cadena de filtros
                                 config.setAllowedHeaders(List.of("*"));
                                 return config;
                             }))
-                            //configurar las rutas que necesitan autenticacion
-                            .authorizeHttpRequests(authRequest -> authRequest
+                            .authorizeHttpRequests(authRequest -> authRequest//configurar las rutas que necesitan autenticacion
                                     .requestMatchers(
                                             "/auth/**",
                                             "/v3/api-docs/**",
@@ -60,8 +59,10 @@ public class SecurityConfig { //obtener la cadena de filtros
                                     .requestMatchers(HttpMethod.PUT).permitAll()
                                     .requestMatchers(HttpMethod.OPTIONS).permitAll()
                                     .requestMatchers(HttpMethod.POST).permitAll()
+                                    .requestMatchers(HttpMethod.GET).permitAll()
+                                    .requestMatchers(HttpMethod.DELETE).permitAll()
                                     .anyRequest().authenticated()
-                    )
+                            )
                     //configurar la sesion para que sea sin estado
                     .sessionManagement(sessionManagement ->
                             sessionManagement
