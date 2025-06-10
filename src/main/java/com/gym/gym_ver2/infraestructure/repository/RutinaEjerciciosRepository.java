@@ -19,4 +19,7 @@ public interface RutinaEjerciciosRepository extends JpaRepository<RutinaEjercici
     @Query(value = "DELETE FROM rutina_ejercicio WHERE id_rutina = :idRutina", nativeQuery = true)
     void eliminarTodoPorRutina(@Param("idRutina") Integer idRutina);
 
+    void deleteByRutina(Rutina rutina);
+
+
 }

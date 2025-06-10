@@ -2,6 +2,7 @@ package com.gym.gym_ver2.infraestructure.controller;
 
 import com.gym.gym_ver2.aplicaction.service.RutinaService;
 import com.gym.gym_ver2.domain.model.dto.RutinaDTO;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Rutina Controller", description = "Endpoints para gestionar rutinas de ejercicios")
 @RequestMapping("/rutina")
 @RestController
 @RequiredArgsConstructor

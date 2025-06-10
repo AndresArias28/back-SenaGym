@@ -147,6 +147,7 @@ public class RutinaServiceImpl implements  RutinaService {
             logger.info("Cantidad de rutinas: {}", rutinas.size());
 
             return RutinaDTO.builder()
+                    .idRutina(rutina.getIdRutina())
                     .nombre(rutina.getNombre())
                     .descripcion(rutina.getDescripcion())
                     .fotoRutina(rutina.getFotoRutina())
@@ -183,9 +184,69 @@ public class RutinaServiceImpl implements  RutinaService {
         }
     }
 
+    @Transactional
     @Override
     public RutinaDTO actualizarRutina(Integer id, RutinaDTO rutinaDTO) {
-        return null;
+        // 1. Buscar la rutina existente
+        Rutina rutinaExistente = rutinaRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Rutina no encontrada con ID: " + id));
+
+        // 2. Eliminar todos los registros anteriores asociados en tabla intermedia
+//        rutinaEjercicioRepo.deleteByRutina(rutinaExistente);
+
+        // 3. Actualizar los campos de la rutina
+        rutinaExistente.setNombre(rutinaDTO.getNombre());
+        rutinaExistente.setDescripcion(rutinaDTO.getDescripcion());
+        rutinaExistente.setFotoRutina(rutinaDTO.getFotoRutina());
+        rutinaExistente.setEnfoque(rutinaDTO.getEnfoque());
+        rutinaExistente.setDificultad(rutinaDTO.getDificultad());
+
+        rutinaRepo.save(rutinaExistente); // guardar cambios
+
+        // 4. Crear nuevas asociaciones RutinaEjercicio desde cero
+        List<RutinaEjercicio> nuevos = rutinaDTO.getEjercicios().stream().map(ejDto -> {
+            Ejercicio ejercicio = ejercicioRepo.findById(ejDto.getIdEjercicio())
+                    .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado con ID: " + ejDto.getIdEjercicio()));
+
+            return RutinaEjercicio.builder()
+                    .rutina(rutinaExistente)
+                    .ejercicio(ejercicio)
+                    .series(ejDto.getSeries())
+                    .repeticiones(ejDto.getRepeticion())
+                    .carga(ejDto.getCarga())
+                    .duracion(ejDto.getDuracion())
+                    .build();
+        }).collect(Collectors.toList());
+
+        rutinaEjercicioRepo.saveAll(nuevos); // guardar nuevos
+
+        // 5. Preparar respuesta
+        List<RutinaDTO.RutinaEjercicioDTO> ejercicioDTOs = nuevos.stream()
+                .map(re -> {
+                    Ejercicio ej = re.getEjercicio();
+                    return RutinaDTO.RutinaEjercicioDTO.builder()
+                            .idEjercicio(ej.getIdEjercicio())
+                            .nombre(ej.getNombreEjercicio())
+                            .descripcion(ej.getDescripcionEjercicio())
+                            .musculos(ej.getMusculos())
+                            .fotoEjercicio(ej.getFotoEjercicio())
+                            .repeticion(re.getRepeticiones())
+                            .series(re.getSeries())
+                            .duracion(re.getDuracion())
+                            .carga(re.getCarga())
+                            .build();
+                }).collect(Collectors.toList());
+
+        return RutinaDTO.builder()
+                .idRutina(rutinaExistente.getIdRutina())
+                .nombre(rutinaExistente.getNombre())
+                .descripcion(rutinaExistente.getDescripcion())
+                .fotoRutina(rutinaExistente.getFotoRutina())
+                .enfoque(rutinaExistente.getEnfoque())
+                .dificultad(rutinaExistente.getDificultad())
+                .ejercicios(ejercicioDTOs)
+                .build();
     }
+
 
 }

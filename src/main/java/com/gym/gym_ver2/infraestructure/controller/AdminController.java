@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+
 
 import java.security.Principal;
 import java.util.List;
@@ -28,6 +30,7 @@ public class AdminController {
         this.adminService = adminService;
     }
 
+    @Operation(hidden = true)
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/obtenerAdmins")
     public ResponseEntity<List<AdminDTO>> obtenerAdmins() {

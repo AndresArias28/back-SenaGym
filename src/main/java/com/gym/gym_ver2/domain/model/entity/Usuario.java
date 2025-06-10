@@ -29,7 +29,7 @@ public class Usuario implements UserDetails  {
     @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DesafioRealizado> desafioRealizados;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_persona")
     private Persona persona;
 
