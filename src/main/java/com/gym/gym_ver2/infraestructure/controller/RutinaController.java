@@ -47,12 +47,12 @@ public class RutinaController {
     public ResponseEntity<?> eliminarRutina(@PathVariable Integer id) {
         try {
             rutinaService.eliminarRutina(id);
-            return ResponseEntity.ok("✅ Rutina eliminada exitosamente.");
+            return ResponseEntity.ok("Rutina eliminada exitosamente.");
         } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("❌ en controller Rutina no encontrada con ID: " + id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("en controller Rutina no encontrada con ID: " + id);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("❌ Error al eliminar la rutina.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar la rutina.");
         }
     }
 
