@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Rutina Controller", description = "Endpoints para gestionar rutinas de ejercicios")
 @RequestMapping("/rutina")
@@ -44,15 +46,19 @@ public class RutinaController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @DeleteMapping("/eliminarRutinas/{id}")
-    public ResponseEntity<?> eliminarRutina(@PathVariable Integer id) {
+    public ResponseEntity<Map<String, String>> eliminarRutina(@PathVariable Integer id) {
+        Map<String, String> response = new HashMap<>();
         try {
             rutinaService.eliminarRutina(id);
-            return ResponseEntity.ok("Rutina eliminada exitosamente.");
+            response.put("mensaje", "Rutina eliminada exitosamente.");
+            return ResponseEntity.ok(response);
         } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("en controller Rutina no encontrada con ID: " + id);
+            response.put("error", "Rutina no encontrada con ID: " + id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar la rutina.");
+            response.put("error", "Error al eliminar la rutina.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
