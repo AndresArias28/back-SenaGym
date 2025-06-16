@@ -115,7 +115,6 @@ public class RutinaServiceImpl implements  RutinaService {
         throw new RuntimeException("Error al crear rutina: " + rutinaDTO.getNombre());
     }
 
-
     @Override
     public List<RutinaDTO> obtenerRutinas() {
         // Obtener todas las rutinas desde el repositorio

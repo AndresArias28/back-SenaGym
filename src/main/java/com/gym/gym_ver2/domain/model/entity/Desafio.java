@@ -23,9 +23,6 @@ public class Desafio {
     @Column(name = "nombre_desafio")
     private String nombreDesafio;
 
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "id_rutina", referencedColumnName = "id_rutina")
-//    private Rutina rutina;
 
     @OneToMany(mappedBy = "desafio", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<DesafioRealizado> desafiosUsuarios;

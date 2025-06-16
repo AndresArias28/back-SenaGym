@@ -36,7 +36,7 @@ public class RutinaRealizada {
     @Column(name = "carga")
     private Integer carga;
 
-    @Column(name = "calorias")
-    private Integer calorias;
+    @Column(name = "estado")
+    private String estado;
 
 }
