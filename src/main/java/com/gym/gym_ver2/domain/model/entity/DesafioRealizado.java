@@ -32,7 +32,10 @@ public class DesafioRealizado {
     private java.util.List<RutinaRealizada> rutinasRealizadas;
 
     @Column(name = "fecha_inicio_desafio")
-    private LocalDateTime inicioDesafio;
+    private LocalDateTime fechaInicioDesafio;
+
+    @Column(name = "fecha_fin_desafio")
+    private LocalDateTime fechaFinDesafio;
 
     @Column(name = "estado")
     private String estado;

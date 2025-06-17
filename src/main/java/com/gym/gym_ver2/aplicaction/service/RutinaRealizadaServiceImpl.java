@@ -23,10 +23,10 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
     @Transactional
     public RutinaRealizadaDTO crearRutina(RutinaRealizadaDTO rutinaRealizadaDTO) {
 
-        DesafioRealizado desafio = desafioUsuarioRepository.findById(rutinaRealizadaDTO.getDesafioRealizado().getIdDesafioRealizado())
+        DesafioRealizado desafio = desafioUsuarioRepository.findById(rutinaRealizadaDTO.getDesafioRealizado())
                 .orElseThrow(() -> new RuntimeException("Desafío no encontrado"));
 
-        RutinaEjercicio rutinaEjercicio = rutinaEjerciciosRepository.findById(rutinaRealizadaDTO.getRutinaEjercicio().getIdRutinaEjercicio())
+        RutinaEjercicio rutinaEjercicio = rutinaEjerciciosRepository.findById(rutinaRealizadaDTO.getRutinaEjercicio())
                 .orElseThrow(() -> new RuntimeException("Rutina de ejercicio no encontrada"));
 
         RutinaRealizada rutinaRealizada = RutinaRealizada.builder()
@@ -41,8 +41,8 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
         RutinaRealizada nuevaRutina = rutinaRealizadaRepository.save(rutinaRealizada);
 
         return RutinaRealizadaDTO.builder()
-                .desafioRealizado(nuevaRutina.getDesafioRealizado())
-                .rutinaEjercicio(nuevaRutina.getRutinaEjercicio())
+                .desafioRealizado(nuevaRutina.getDesafioRealizado().getIdDesafioRealizado())
+                .rutinaEjercicio(nuevaRutina.getRutinaEjercicio().getIdRutinaEjercicio())
                 .seriesRealizadas(nuevaRutina.getSeries())
                 .repeticionesRealizadas(nuevaRutina.getRepeticiones())
                 .cargaRealizada(nuevaRutina.getCarga())

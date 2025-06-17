@@ -10,8 +10,8 @@ import lombok.*;
 @Builder
 @Getter
 public class RutinaRealizadaDTO {
-    private DesafioRealizado desafioRealizado;
-    private RutinaEjercicio rutinaEjercicio;
+    private Integer desafioRealizado;
+    private Integer rutinaEjercicio;
     private Integer seriesRealizadas;
     private Integer repeticionesRealizadas;
     private Integer cargaRealizada;

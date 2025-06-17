@@ -43,7 +43,7 @@ public class AdminServiceImpl implements  AdminService {
 
 //    @Override
 //    public AuthResponse registerAdmin(RegisterAdminRequest rq, Principal principal) {
-//        System.out.println("Accediendo al método protegido.");
+//        System.out.println("Accediendo al metodo protegido.");
 //        Usuario usuarioActual = usuarioRepository.findByEmailUsuario(principal.getName())
 //                .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado"));
 //        System.out.println("Usuario autenticado: " + usuarioActual.getNombreUsuario());

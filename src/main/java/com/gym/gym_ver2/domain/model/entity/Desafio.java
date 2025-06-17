@@ -23,14 +23,8 @@ public class Desafio {
     @Column(name = "nombre_desafio")
     private String nombreDesafio;
 
-
     @OneToMany(mappedBy = "desafio", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<DesafioRealizado> desafiosUsuarios;
 
-    @Column(name = "descripcion_desafio")
-    private String descripcionDesafio;
-
-    @Column(name = "foto_desafio")
-    private String fotoDesafio;
 
 }
