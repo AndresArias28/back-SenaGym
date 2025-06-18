@@ -1,14 +1,13 @@
 package com.gym.gym_ver2.infraestructure.controller;
 
 import com.gym.gym_ver2.domain.model.dto.EmailRequestForgotPass;
+import com.gym.gym_ver2.domain.model.dto.RegisterRequestDTO;
 import com.gym.gym_ver2.infraestructure.auth.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 import java.util.Map;
 
 @Tag(name = "auth  Controller", description = "Endpoints para la autenticación y restablecimiento de contraseñas")
@@ -17,7 +16,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService;//instancia para acceder a los metodos y a su vez al token
+    private final AuthService authService;
 
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(value="/login")
@@ -25,9 +24,9 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(rq));
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponse> registerUsers(@RequestBody RegisterRequest rq) {
-
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping(value="/register", consumes = "multipart/form-data")
+    public ResponseEntity<AuthResponse> registerUsers(@ModelAttribute RegisterRequestDTO rq) {
         return ResponseEntity.ok(authService.register(rq));
     }
 

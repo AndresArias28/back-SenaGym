@@ -1,12 +1,15 @@
 package com.gym.gym_ver2.infraestructure.controller;
 
 import com.gym.gym_ver2.aplicaction.service.RutinaService;
+import com.gym.gym_ver2.domain.model.dto.RutinaCreateDTO;
 import com.gym.gym_ver2.domain.model.dto.RutinaDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,10 +23,15 @@ public class RutinaController {
     private final RutinaService rutinaService;
 
     @CrossOrigin(origins = "http://localhost:4200")
-    @PostMapping("/crear")
-    public ResponseEntity<RutinaDTO> crearRutina(@RequestBody RutinaDTO rutinaDTO) {
+    @PostMapping(value = "/crear", consumes = "multipart/form-data")
+    public ResponseEntity<RutinaDTO> crearRutina(
+            @RequestPart("datos") RutinaCreateDTO datos,
+            @RequestPart("fotoRutina") MultipartFile fotoRutina
+    ) {
+        datos.setFotoRutina(fotoRutina);
+
         try {
-            RutinaDTO nuevaRutina = rutinaService.crearRutina(rutinaDTO);
+            RutinaDTO nuevaRutina = rutinaService.crearRutina(datos);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaRutina);
         } catch (Exception e) {
              e.printStackTrace();

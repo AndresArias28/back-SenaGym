@@ -30,4 +30,10 @@ public class Aprendiz extends Persona {
     @Column(name = "nivel_fisico")
     private String nivelFisico;
 
+    @Column(name = "puntos_acumulados")
+    private Integer puntosAcumulados;
+
+    @Column(name = "horas_acumuladas")
+    private Integer horasAcumuladas;
+
 }

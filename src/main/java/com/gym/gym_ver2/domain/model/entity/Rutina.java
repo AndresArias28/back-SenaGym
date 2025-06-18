@@ -44,4 +44,7 @@ public class Rutina {
     @Column(name = "calorias_totales")
     private Integer caloriasTotales;
 
+    @Column(name = "image_public_id")
+    private String imagePublicId;
+
 }

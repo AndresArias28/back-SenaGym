@@ -1,0 +1,23 @@
+{
+  "nombre": "Resistencia muscular",
+  "descripcion": "Entrenamiento enfocado a la velocidad",
+  "enfoque": "TREN_SUPERIOR",
+  "dificultad": "AVANZADO",
+  "puntajeRutina": 0,
+  "ejercicios": [
+    {
+      "idEjercicio": 7,
+      "series": 4,
+      "repeticion": 12,
+      "carga": 0,
+      "duracion": 30
+    },
+    {
+      "idEjercicio": 8,
+      "series": 3,
+      "repeticion": 15,
+      "carga": 15,
+      "duracion": 45
+    }
+  ]
+}

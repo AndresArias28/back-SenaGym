@@ -1,5 +1,6 @@
 package com.gym.gym_ver2.aplicaction.service;
 
+import com.gym.gym_ver2.domain.model.dto.RutinaCreateDTO;
 import com.gym.gym_ver2.domain.model.dto.RutinaDTO;
 import com.gym.gym_ver2.domain.model.entity.Ejercicio;
 import com.gym.gym_ver2.domain.model.entity.Rutina;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -25,13 +27,33 @@ public class RutinaServiceImpl implements  RutinaService {
     private final RutinaRepository rutinaRepo;
     private final EjercicioRepository ejercicioRepo;
     private final RutinaEjerciciosRepository rutinaEjercicioRepo;
+    private final CloudinaryService cloudinaryService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     @Transactional
-    public RutinaDTO crearRutina(RutinaDTO rutinaDTO) {
+    public RutinaDTO crearRutina(RutinaCreateDTO rutinaDTO) {
+
+        String imageUrl = null;
+        String imagePublicId = null;
+
+        MultipartFile file = rutinaDTO.getFotoRutina();
+
+        if (file != null && !file.isEmpty()) {
+            try{
+                var result = cloudinaryService.uploadImage(file, "rutinas");
+                imageUrl = result.get("url");
+                imagePublicId = result.get("public_id");
+            }catch (Exception e){
+                throw new RuntimeException("Error al subir la imagen: " + e.getMessage());
+            }
+
+        }else{
+            imageUrl = "default.png";
+            imagePublicId = "default";
+        }
 
         int puntaje = switch (rutinaDTO.getDificultad()) {
             case PRINCIPIANTE -> 100;
@@ -43,7 +65,8 @@ public class RutinaServiceImpl implements  RutinaService {
         Rutina rutina = Rutina.builder()
                 .nombre(rutinaDTO.getNombre())
                 .descripcion(rutinaDTO.getDescripcion())
-                .fotoRutina(rutinaDTO.getFotoRutina())
+                .fotoRutina(imageUrl)
+                .imagePublicId(imagePublicId)
                 .enfoque(rutinaDTO.getEnfoque())
                 .dificultad(rutinaDTO.getDificultad())
                 .puntuajeRutina(puntaje)
@@ -73,7 +96,7 @@ public class RutinaServiceImpl implements  RutinaService {
             System.out.println("Total de RutinaEjercicio generados: " + rutinaEjercicios.size());
 
             rutinaEjercicioRepo.saveAll(rutinaEjercicios);
-            System.out.println("✅ RutinaEjercicios guardados correctamente.");
+            System.out.println("RutinaEjercicios guardados correctamente.");
 
             // 3. Mapear los ejercicios al DTO interno
             List<RutinaDTO.RutinaEjercicioDTO> ejercicioDTOs = rutinaEjercicios.stream().map(re -> {
@@ -87,7 +110,6 @@ public class RutinaServiceImpl implements  RutinaService {
                 return RutinaDTO.RutinaEjercicioDTO.builder()
                         .idEjercicio(ej.getIdEjercicio())
                         .descripcion(ej.getDescripcionEjercicio())
-                        .fotoEjercicio(ej.getFotoEjercicio())
                         .musculos(ej.getMusculos())
                         .series(re.getSeries())
                         .repeticion(re.getRepeticiones())
@@ -133,7 +155,6 @@ public class RutinaServiceImpl implements  RutinaService {
                                 .nombre(ejercicio.getNombreEjercicio())
                                 .descripcion(ejercicio.getDescripcionEjercicio())
                                 .musculos(ejercicio.getMusculos())
-                                .fotoEjercicio(ejercicio.getFotoEjercicio())
                                 .repeticion(re.getRepeticiones())
                                 .series(re.getSeries())
                                 .duracion(re.getDuracion())
@@ -228,7 +249,7 @@ public class RutinaServiceImpl implements  RutinaService {
                             .nombre(ej.getNombreEjercicio())
                             .descripcion(ej.getDescripcionEjercicio())
                             .musculos(ej.getMusculos())
-                            .fotoEjercicio(ej.getFotoEjercicio())
+//                            .fotoEjercicio(ej.getFotoEjercicio())
                             .repeticion(re.getRepeticiones())
                             .series(re.getSeries())
                             .duracion(re.getDuracion())

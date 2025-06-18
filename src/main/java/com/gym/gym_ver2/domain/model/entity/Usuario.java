@@ -54,6 +54,9 @@ public class Usuario implements UserDetails  {
     @Column(name = "horas_acumuladas")
     private Integer horasAcumuladas;
 
+    @Column(name = "image_public_id")
+    private String imagePublicId;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return idRol != null

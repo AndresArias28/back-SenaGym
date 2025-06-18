@@ -1,8 +1,12 @@
 package com.gym.gym_ver2.infraestructure.auth;
 //patrones utilizados: builder, singleton,  inyeccion de dependencias. fachada, observerr, Cadena de Responsabilidad
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import com.gym.gym_ver2.aplicaction.service.CloudinaryService;
 import com.gym.gym_ver2.aplicaction.service.PasswordResetService;
 import com.gym.gym_ver2.aplicaction.service.UsuarioService;
+import com.gym.gym_ver2.domain.model.dto.RegisterRequestDTO;
 import com.gym.gym_ver2.domain.model.entity.Aprendiz;
 import com.gym.gym_ver2.domain.model.entity.Rol;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
@@ -21,7 +25,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -40,6 +48,7 @@ public class AuthServiceImpl implements  AuthService {
     private final JavaMailSender mailSender;
     private final UserDetailsService userDetailsService;
     private  final CustomUserDetailsService customUserDetailsService;
+    private final CloudinaryService cloudinaryService;
 
     public AuthResponse login(LoginRequest rq) {
         // Validar que el email y la contraseña no estén vacíos
@@ -67,7 +76,25 @@ public class AuthServiceImpl implements  AuthService {
         }
     }
 
-    public AuthResponse register(RegisterRequest rq) {
+    public AuthResponse register(RegisterRequestDTO rq) {
+        String imageUrl = null;
+        String imagePublicId = null;
+
+        MultipartFile file = rq.getFotoPerfil();
+
+        if (file != null && !file.isEmpty()) {
+            try{
+                var result = cloudinaryService.uploadImage(file, "usuarios");
+                imageUrl = result.get("url");
+                imagePublicId = result.get("public_id");
+            }catch (Exception e){
+                throw new RuntimeException("Error al subir la imagen: " + e.getMessage());
+            }
+
+        }else{
+            imageUrl = "default.png";
+            imagePublicId = "default";
+        }
 
         // Validar que el email y la contraseña no estén vacíos
         if (rq.getEmailUsuario() == null || rq.getEmailUsuario().isEmpty()) {
@@ -80,11 +107,8 @@ public class AuthServiceImpl implements  AuthService {
         if (userRepository.findByEmailUsuario(rq.getEmailUsuario()).isPresent()) {
             throw new RuntimeException("El usuario ya existe");
         }
-
         // obtener el rol de aprendiz  desde la base de datos
-        Rol rol = rolRepository.findById(3)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
-
+        Rol rol = rolRepository.findById(3).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
         // crear y guardar al aprendiz (persona concreta)
         Aprendiz aprendiz = Aprendiz.builder()// crear un aprendiz con la informacion del usuario
                 .nombres(rq.getNombres())
@@ -109,10 +133,11 @@ public class AuthServiceImpl implements  AuthService {
                 .nombreUsuario(rq.getNombreUsuario())
                 .emailUsuario(rq.getEmailUsuario())
                 .contrasenaUsuario(passwordEncoder.encode(rq.getContrasenaUsuario()))//codificar la contraseña
-                .fotoPerfil("default.png")//por defecto se asigna una foto de perfil
-                .estado(rq.estado)
-                .puntosAcumulados(0) // Inicializar puntos acumulados en 0
-                .horasAcumuladas(0) // Inicializar horas acumuladas en 0
+                .fotoPerfil(imageUrl)
+                .imagePublicId(imagePublicId)
+                .estado(rq.getEstado())
+                .puntosAcumulados(0) //  puntos acumulados en 0
+                .horasAcumuladas(0)
                 .build();
 
         //guardar el usuario en la base de datos
