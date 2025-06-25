@@ -1,7 +1,7 @@
 package com.gym.gym_ver2.infraestructure.config;
 
 import com.gym.gym_ver2.domain.model.entity.Usuario;
-import com.gym.gym_ver2.infraestructure.repository.UsuarioRepository;
+import com.gym.gym_ver2.infraestructure.persistence.repository.UsuarioRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;

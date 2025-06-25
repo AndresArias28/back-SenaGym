@@ -1,8 +1,6 @@
 package com.gym.gym_ver2.infraestructure.auth;
 //patrones utilizados: builder, singleton,  inyeccion de dependencias. fachada, observerr, Cadena de Responsabilidad
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import com.gym.gym_ver2.aplicaction.service.CloudinaryService;
 import com.gym.gym_ver2.aplicaction.service.PasswordResetService;
 import com.gym.gym_ver2.aplicaction.service.UsuarioService;
@@ -12,10 +10,10 @@ import com.gym.gym_ver2.domain.model.entity.Rol;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
 import com.gym.gym_ver2.infraestructure.config.CustomUserDetailsService;
 import com.gym.gym_ver2.infraestructure.jwt.JwtService;
-import com.gym.gym_ver2.infraestructure.repository.AprendizRepository;
-import com.gym.gym_ver2.infraestructure.repository.PersonaRepository;
-import com.gym.gym_ver2.infraestructure.repository.RolRepository;
-import com.gym.gym_ver2.infraestructure.repository.UsuarioRepository;
+import com.gym.gym_ver2.infraestructure.persistence.repository.AprendizRepository;
+import com.gym.gym_ver2.infraestructure.persistence.repository.PersonaRepository;
+import com.gym.gym_ver2.infraestructure.persistence.repository.RolRepository;
+import com.gym.gym_ver2.infraestructure.persistence.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -27,9 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Service

@@ -1,4 +1,4 @@
-package com.gym.gym_ver2.infraestructure.repository;
+package com.gym.gym_ver2.infraestructure.persistence.repository;
 
 import com.gym.gym_ver2.domain.model.entity.PasswordResetToken;
 import org.springframework.data.jpa.repository.JpaRepository;

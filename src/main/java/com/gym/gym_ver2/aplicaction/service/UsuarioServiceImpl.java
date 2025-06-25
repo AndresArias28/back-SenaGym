@@ -6,7 +6,7 @@ import com.gym.gym_ver2.domain.model.entity.Rol;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
 import com.gym.gym_ver2.domain.model.pojos.UserResponse;
 import com.gym.gym_ver2.domain.model.dto.UsuarioDTO;
-import com.gym.gym_ver2.infraestructure.repository.UsuarioRepository;
+import com.gym.gym_ver2.infraestructure.persistence.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

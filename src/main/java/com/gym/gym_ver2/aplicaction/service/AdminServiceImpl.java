@@ -3,15 +3,11 @@ package com.gym.gym_ver2.aplicaction.service;
 import com.gym.gym_ver2.domain.model.dto.AdminDTO;
 import com.gym.gym_ver2.domain.model.entity.Rol;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
-import com.gym.gym_ver2.domain.model.requestModels.RegisterAdminRequest;
-import com.gym.gym_ver2.infraestructure.auth.AuthResponse;
-import com.gym.gym_ver2.infraestructure.repository.RolRepository;
-import com.gym.gym_ver2.infraestructure.repository.UsuarioRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.gym.gym_ver2.infraestructure.persistence.repository.RolRepository;
+import com.gym.gym_ver2.infraestructure.persistence.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
 import java.util.List;
 
 @Service

@@ -2,13 +2,12 @@ package com.gym.gym_ver2.aplicaction.service;
 
 import com.gym.gym_ver2.domain.model.entity.PasswordResetToken;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
-import com.gym.gym_ver2.infraestructure.repository.PasswordResetTokenRepository;
+import com.gym.gym_ver2.infraestructure.persistence.repository.PasswordResetTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
