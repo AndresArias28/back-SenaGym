@@ -13,7 +13,10 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,6 +112,7 @@ public class RutinaServiceImpl implements  RutinaService {
 
                 return RutinaDTO.RutinaEjercicioDTO.builder()
                         .idEjercicio(ej.getIdEjercicio())
+                        .nombre(ej.getNombreEjercicio())
                         .descripcion(ej.getDescripcionEjercicio())
                         .musculos(ej.getMusculos())
                         .series(re.getSeries())
@@ -207,66 +211,71 @@ public class RutinaServiceImpl implements  RutinaService {
     @Transactional
     @Override
     public RutinaDTO actualizarRutina(Integer id, RutinaDTO rutinaDTO) {
-        // 1. Buscar la rutina existente
-        Rutina rutinaExistente = rutinaRepo.findById(id)
+
+        // 1. Buscar la rutina
+        Rutina rutina = rutinaRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Rutina no encontrada con ID: " + id));
 
-        // 2. Eliminar todos los registros anteriores asociados en tabla intermedia
-//        rutinaEjercicioRepo.deleteByRutina(rutinaExistente);
+        // 2. Actualizar datos generales
+        rutina.setNombre(rutinaDTO.getNombre());
+        rutina.setDescripcion(rutinaDTO.getDescripcion());
+        rutina.setFotoRutina(rutinaDTO.getFotoRutina());
+        rutina.setEnfoque(rutinaDTO.getEnfoque());
+        rutina.setDificultad(rutinaDTO.getDificultad());
 
-        // 3. Actualizar los campos de la rutina
-        rutinaExistente.setNombre(rutinaDTO.getNombre());
-        rutinaExistente.setDescripcion(rutinaDTO.getDescripcion());
-        rutinaExistente.setFotoRutina(rutinaDTO.getFotoRutina());
-        rutinaExistente.setEnfoque(rutinaDTO.getEnfoque());
-        rutinaExistente.setDificultad(rutinaDTO.getDificultad());
+        // 3. Guardar cambios de la rutina
+        rutinaRepo.save(rutina);
 
-        rutinaRepo.save(rutinaExistente); // guardar cambios
+        // 4. Eliminar ejercicios antiguos por ID de rutina
+        rutinaEjercicioRepo.eliminarPorRutinaId(rutina.getIdRutina());
 
-        // 4. Crear nuevas asociaciones RutinaEjercicio desde cero
-        List<RutinaEjercicio> nuevos = rutinaDTO.getEjercicios().stream().map(ejDto -> {
+        // 5. Crear nuevos RutinaEjercicio y guardar directamente
+        List<RutinaEjercicio> nuevos = new ArrayList<>();
+
+        for (RutinaDTO.RutinaEjercicioDTO ejDto : rutinaDTO.getEjercicios()) {
             Ejercicio ejercicio = ejercicioRepo.findById(ejDto.getIdEjercicio())
-                    .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado con ID: " + ejDto.getIdEjercicio()));
+                    .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
 
-            return RutinaEjercicio.builder()
-                    .rutina(rutinaExistente)
+            RutinaEjercicio nuevo = RutinaEjercicio.builder()
+                    .rutina(rutina)
                     .ejercicio(ejercicio)
                     .series(ejDto.getSeries())
                     .repeticiones(ejDto.getRepeticion())
                     .carga(ejDto.getCarga())
                     .duracion(ejDto.getDuracion())
                     .build();
+
+            nuevos.add(nuevo);
+        }
+
+        rutinaEjercicioRepo.saveAll(nuevos); // sin tocar la lista en la entidad
+
+        // 6. DTO de respuesta
+        List<RutinaDTO.RutinaEjercicioDTO> ejercicioDTOs = nuevos.stream().map(re -> {
+            Ejercicio ej = re.getEjercicio();
+            return RutinaDTO.RutinaEjercicioDTO.builder()
+                    .idEjercicio(ej.getIdEjercicio())
+                    .nombre(ej.getNombreEjercicio())
+                    .descripcion(ej.getDescripcionEjercicio())
+                    .musculos(ej.getMusculos())
+                    .repeticion(re.getRepeticiones())
+                    .series(re.getSeries())
+                    .duracion(re.getDuracion())
+                    .carga(re.getCarga())
+                    .build();
         }).collect(Collectors.toList());
 
-        rutinaEjercicioRepo.saveAll(nuevos); // guardar nuevos
-
-        // 5. Preparar respuesta
-        List<RutinaDTO.RutinaEjercicioDTO> ejercicioDTOs = nuevos.stream()
-                .map(re -> {
-                    Ejercicio ej = re.getEjercicio();
-                    return RutinaDTO.RutinaEjercicioDTO.builder()
-                            .idEjercicio(ej.getIdEjercicio())
-                            .nombre(ej.getNombreEjercicio())
-                            .descripcion(ej.getDescripcionEjercicio())
-                            .musculos(ej.getMusculos())
-//                            .fotoEjercicio(ej.getFotoEjercicio())
-                            .repeticion(re.getRepeticiones())
-                            .series(re.getSeries())
-                            .duracion(re.getDuracion())
-                            .carga(re.getCarga())
-                            .build();
-                }).collect(Collectors.toList());
-
         return RutinaDTO.builder()
-                .idRutina(rutinaExistente.getIdRutina())
-                .nombre(rutinaExistente.getNombre())
-                .descripcion(rutinaExistente.getDescripcion())
-                .fotoRutina(rutinaExistente.getFotoRutina())
-                .enfoque(rutinaExistente.getEnfoque())
-                .dificultad(rutinaExistente.getDificultad())
+                .idRutina(rutina.getIdRutina())
+                .nombre(rutina.getNombre())
+                .descripcion(rutina.getDescripcion())
+                .fotoRutina(rutina.getFotoRutina())
+                .enfoque(rutina.getEnfoque())
+                .dificultad(rutina.getDificultad())
                 .ejercicios(ejercicioDTOs)
                 .build();
     }
+
 
 
 }

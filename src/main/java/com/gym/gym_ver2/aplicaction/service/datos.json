@@ -1,23 +1,12 @@
 {
-  "nombre": "Resistencia muscular",
-  "descripcion": "Entrenamiento enfocado a la velocidad",
-  "enfoque": "TREN_SUPERIOR",
-  "dificultad": "AVANZADO",
+  "nombre": "Fuerza y Potencia Inferior",
+  "descripcion": "Ejercicios de fuerza para glúteos, cuádriceps e isquiotibiales",
+  "enfoque": "TREN_INFERIOR",
+  "dificultad": "INTERMEDIO",
   "puntajeRutina": 0,
   "ejercicios": [
-    {
-      "idEjercicio": 7,
-      "series": 4,
-      "repeticion": 12,
-      "carga": 0,
-      "duracion": 30
-    },
-    {
-      "idEjercicio": 8,
-      "series": 3,
-      "repeticion": 15,
-      "carga": 15,
-      "duracion": 45
-    }
+    { "idEjercicio": 7, "series": 4, "repeticion": 8, "carga": 30, "duracion": 60 },
+    { "idEjercicio": 16, "series": 3, "repeticion": 10, "carga": 20, "duracion": 40 },
+    { "idEjercicio": 18, "series": 3, "repeticion": 10, "carga": 25, "duracion": 45 }
   ]
 }
