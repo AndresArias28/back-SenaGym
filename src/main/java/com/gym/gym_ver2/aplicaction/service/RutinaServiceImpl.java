@@ -166,9 +166,6 @@ public class RutinaServiceImpl implements  RutinaService {
                     })
                     .collect(Collectors.toList());
 
-            // Retornar DTO de rutina
-            logger.info("Cantidad de rutinas: {}", rutinas.size());
-
             return RutinaDTO.builder()
                     .idRutina(rutina.getIdRutina())
                     .nombre(rutina.getNombre())
@@ -209,16 +206,38 @@ public class RutinaServiceImpl implements  RutinaService {
 
     @Transactional
     @Override
-    public RutinaDTO actualizarRutina(Integer id, RutinaDTO rutinaDTO) {
+    public RutinaDTO actualizarRutina(Integer id, RutinaCreateDTO rutinaDTO) {
+
+        String imageUrl = null;
+        String imagePublicId = null;
+        MultipartFile file = rutinaDTO.getFotoRutina();
+
+        if (file != null && !file.isEmpty()) {
+            try {
+                var result = cloudinaryService.uploadImage(file, "rutinas");
+                imageUrl = result.get("url");
+                imagePublicId = result.get("public_id");
+            } catch (Exception e) {
+                throw new RuntimeException("Error al subir la imagen: " + e.getMessage());
+            }
+        } else {
+            // Si no hay foto nueva, mantener la imagen actual
+            Rutina existingRutina = rutinaRepo.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Rutina no encontrada con ID: " + id));
+            imageUrl = existingRutina.getFotoRutina();
+            imagePublicId = existingRutina.getImagePublicId();
+        }
 
         // 1. Buscar la rutina
         Rutina rutina = rutinaRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Rutina no encontrada con ID: " + id));
 
+
         // 2. Actualizar datos generales
         rutina.setNombre(rutinaDTO.getNombre());
+        rutina.setFotoRutina(imageUrl);
         rutina.setDescripcion(rutinaDTO.getDescripcion());
-        rutina.setFotoRutina(rutinaDTO.getFotoRutina());
+        rutina.setImagePublicId(imagePublicId);
         rutina.setEnfoque(rutinaDTO.getEnfoque());
         rutina.setDificultad(rutinaDTO.getDificultad());
 
@@ -231,7 +250,7 @@ public class RutinaServiceImpl implements  RutinaService {
         // 5. Crear nuevos RutinaEjercicio y guardar directamente
         List<RutinaEjercicio> nuevos = new ArrayList<>();
 
-        for (RutinaDTO.RutinaEjercicioDTO ejDto : rutinaDTO.getEjercicios()) {
+        for (RutinaCreateDTO.RutinaEjercicioDTO ejDto : rutinaDTO.getEjercicios()) {
             Ejercicio ejercicio = ejercicioRepo.findById(ejDto.getIdEjercicio())
                     .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
 
@@ -274,7 +293,5 @@ public class RutinaServiceImpl implements  RutinaService {
                 .ejercicios(ejercicioDTOs)
                 .build();
     }
-
-
 
 }

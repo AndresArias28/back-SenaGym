@@ -70,15 +70,25 @@ public class RutinaController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
-    @PutMapping("/actualizar/{id}")
-    public ResponseEntity<RutinaDTO> actualizarRutina(@PathVariable Integer id, @RequestBody RutinaDTO rutinaDTO) {
+    @PutMapping(value = "/actualizar/{id}", consumes = "multipart/form-data")
+    public ResponseEntity<RutinaDTO> actualizarRutina(
+            @PathVariable Integer id,
+            @RequestPart("datos") RutinaCreateDTO datos,
+            @RequestPart(value = "fotoRutina", required = false) MultipartFile fotoRutina
+    ) {
         try {
-            RutinaDTO rutinaActualizada = rutinaService.actualizarRutina(id, rutinaDTO);
+            // Solo se actualiza la foto si viene una nueva
+            if (fotoRutina != null && !fotoRutina.isEmpty()) {
+                datos.setFotoRutina(fotoRutina);
+            }
+
+            RutinaDTO rutinaActualizada = rutinaService.actualizarRutina(id, datos);
             return ResponseEntity.ok(rutinaActualizada);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
 }

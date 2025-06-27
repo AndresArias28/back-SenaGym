@@ -14,5 +14,5 @@ public interface RutinaService {
 
     void eliminarRutina(Integer id);
 
-    RutinaDTO actualizarRutina(Integer id, RutinaDTO rutinaDTO);
+    RutinaDTO actualizarRutina(Integer id, RutinaCreateDTO rutinaDTO);
 }
