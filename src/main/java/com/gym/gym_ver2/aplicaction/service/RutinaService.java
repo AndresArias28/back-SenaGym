@@ -4,6 +4,7 @@ import com.gym.gym_ver2.domain.model.dto.RutinaCreateDTO;
 import com.gym.gym_ver2.domain.model.dto.RutinaDTO;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface RutinaService {
@@ -14,5 +15,5 @@ public interface RutinaService {
 
     void eliminarRutina(Integer id);
 
-    RutinaDTO actualizarRutina(Integer id, RutinaCreateDTO rutinaDTO);
+    RutinaDTO actualizarRutina(Integer id, RutinaCreateDTO rutinaDTO) throws IOException;
 }

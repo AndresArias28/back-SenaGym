@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -206,11 +207,35 @@ public class RutinaServiceImpl implements  RutinaService {
 
     @Transactional
     @Override
-    public RutinaDTO actualizarRutina(Integer id, RutinaCreateDTO rutinaDTO) {
+    public RutinaDTO actualizarRutina(Integer id, RutinaCreateDTO rutinaDTO) throws IOException {
 
         String imageUrl = null;
         String imagePublicId = null;
         MultipartFile file = rutinaDTO.getFotoRutina();
+
+//        if (file != null && !file.isEmpty()) {
+//            try {
+//                var result = cloudinaryService.uploadImage(file, "rutinas");
+//                imageUrl = result.get("url");
+//                imagePublicId = result.get("public_id");
+//                rutinaDTO.setFotoRutina(imageUrl);
+//                rutinaDTO.set
+//                throw new RuntimeException("Error al subir la imagen: " + e.getMessage());
+//            }
+//        } else {
+//            // Si no hay foto nueva, mantener la imagen actual
+//            Rutina existingRutina = rutinaRepo.findById(id)
+//                    .orElseThrow(() -> new RuntimeException("Rutina no encontrada con ID: " + id));
+//            imageUrl = existingRutina.getFotoRutina();
+//            imagePublicId = existingRutina.getImagePublicId();
+//        }
+
+        // 1. Buscar la rutina
+        Rutina rutina = rutinaRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Rutina no encontrada con ID: " + id));
+
+        imageUrl = rutina.getFotoRutina();
+        imagePublicId = rutina.getImagePublicId();
 
         if (file != null && !file.isEmpty()) {
             try {
@@ -220,18 +245,7 @@ public class RutinaServiceImpl implements  RutinaService {
             } catch (Exception e) {
                 throw new RuntimeException("Error al subir la imagen: " + e.getMessage());
             }
-        } else {
-            // Si no hay foto nueva, mantener la imagen actual
-            Rutina existingRutina = rutinaRepo.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Rutina no encontrada con ID: " + id));
-            imageUrl = existingRutina.getFotoRutina();
-            imagePublicId = existingRutina.getImagePublicId();
         }
-
-        // 1. Buscar la rutina
-        Rutina rutina = rutinaRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rutina no encontrada con ID: " + id));
-
 
         // 2. Actualizar datos generales
         rutina.setNombre(rutinaDTO.getNombre());
@@ -250,6 +264,7 @@ public class RutinaServiceImpl implements  RutinaService {
         // 5. Crear nuevos RutinaEjercicio y guardar directamente
         List<RutinaEjercicio> nuevos = new ArrayList<>();
 
+        //6 validar que la lista de ejercicios no esté vacía
         for (RutinaCreateDTO.RutinaEjercicioDTO ejDto : rutinaDTO.getEjercicios()) {
             Ejercicio ejercicio = ejercicioRepo.findById(ejDto.getIdEjercicio())
                     .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
@@ -266,7 +281,7 @@ public class RutinaServiceImpl implements  RutinaService {
             nuevos.add(nuevo);
         }
 
-        rutinaEjercicioRepo.saveAll(nuevos); // sin tocar la lista en la entidad
+        rutinaEjercicioRepo.saveAll(nuevos); // sin tocar la lista en la entidad RutinaEjercicio
 
         // 6. DTO de respuesta
         List<RutinaDTO.RutinaEjercicioDTO> ejercicioDTOs = nuevos.stream().map(re -> {
