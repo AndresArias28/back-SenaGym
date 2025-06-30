@@ -13,7 +13,6 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -213,23 +212,6 @@ public class RutinaServiceImpl implements  RutinaService {
         String imagePublicId = null;
         MultipartFile file = rutinaDTO.getFotoRutina();
 
-//        if (file != null && !file.isEmpty()) {
-//            try {
-//                var result = cloudinaryService.uploadImage(file, "rutinas");
-//                imageUrl = result.get("url");
-//                imagePublicId = result.get("public_id");
-//                rutinaDTO.setFotoRutina(imageUrl);
-//                rutinaDTO.set
-//                throw new RuntimeException("Error al subir la imagen: " + e.getMessage());
-//            }
-//        } else {
-//            // Si no hay foto nueva, mantener la imagen actual
-//            Rutina existingRutina = rutinaRepo.findById(id)
-//                    .orElseThrow(() -> new RuntimeException("Rutina no encontrada con ID: " + id));
-//            imageUrl = existingRutina.getFotoRutina();
-//            imagePublicId = existingRutina.getImagePublicId();
-//        }
-
         // 1. Buscar la rutina
         Rutina rutina = rutinaRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Rutina no encontrada con ID: " + id));
@@ -285,6 +267,38 @@ public class RutinaServiceImpl implements  RutinaService {
 
         // 6. DTO de respuesta
         List<RutinaDTO.RutinaEjercicioDTO> ejercicioDTOs = nuevos.stream().map(re -> {
+            Ejercicio ej = re.getEjercicio();
+            return RutinaDTO.RutinaEjercicioDTO.builder()
+                    .idEjercicio(ej.getIdEjercicio())
+                    .nombre(ej.getNombreEjercicio())
+                    .descripcion(ej.getDescripcionEjercicio())
+                    .musculos(ej.getMusculos())
+                    .repeticion(re.getRepeticiones())
+                    .series(re.getSeries())
+                    .duracion(re.getDuracion())
+                    .carga(re.getCarga())
+                    .build();
+        }).collect(Collectors.toList());
+
+        return RutinaDTO.builder()
+                .idRutina(rutina.getIdRutina())
+                .nombre(rutina.getNombre())
+                .descripcion(rutina.getDescripcion())
+                .fotoRutina(rutina.getFotoRutina())
+                .enfoque(rutina.getEnfoque())
+                .dificultad(rutina.getDificultad())
+                .ejercicios(ejercicioDTOs)
+                .build();
+    }
+
+    @Override
+    public RutinaDTO obtenerRutinaPorId(Integer id) {
+        Rutina rutina = rutinaRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Rutina no encontrada con ID: " + id));
+
+        List<RutinaEjercicio> ejercicios = rutinaEjercicioRepo.findByRutina(rutina);
+
+        List<RutinaDTO.RutinaEjercicioDTO> ejercicioDTOs = ejercicios.stream().map(re -> {
             Ejercicio ej = re.getEjercicio();
             return RutinaDTO.RutinaEjercicioDTO.builder()
                     .idEjercicio(ej.getIdEjercicio())

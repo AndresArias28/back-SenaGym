@@ -16,4 +16,6 @@ public interface RutinaService {
     void eliminarRutina(Integer id);
 
     RutinaDTO actualizarRutina(Integer id, RutinaCreateDTO rutinaDTO) throws IOException;
+
+    RutinaDTO obtenerRutinaPorId(Integer id);
 }
