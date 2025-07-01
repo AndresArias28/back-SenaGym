@@ -41,6 +41,7 @@ public class EjercicioServiceImpl implements EjercicioService {
     }
 
     @Override
+    @Transactional
     public EjercicioDTO crearEjercicio(ExercisesCreateDTO ejercicioDTO) {
         String imagenUrl = null;
         String imagenPublicId = null;
@@ -76,6 +77,39 @@ public class EjercicioServiceImpl implements EjercicioService {
                 nuevoEjercicio.getFotoEjercicio(),
                 nuevoEjercicio.getMusculos(),
                 nuevoEjercicio.getMet()
+        );
+    }
+
+    @Transactional
+    @Override
+    public EjercicioDTO actualizarEjercicio(Integer id, ExercisesCreateDTO datos) {
+        Ejercicio ejercicio = ejercicioRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ejercicio no encontrado con ID: " + id));
+
+        if (datos.getFotoEjercicio() != null && !datos.getFotoEjercicio().isEmpty()) {
+            try {
+                var imageCloudinary = cloudinaryService.uploadImage(datos.getFotoEjercicio(), "ejercicios");
+                ejercicio.setFotoEjercicio(imageCloudinary.get("url"));
+                ejercicio.setImagePublicId(imageCloudinary.get("public_id"));
+            } catch (Exception e) {
+                throw new RuntimeException("Error al subir la imagen: " + e.getMessage());
+            }
+        }
+
+        ejercicio.setNombreEjercicio(datos.getNombreEjercicio());
+        ejercicio.setDescripcionEjercicio(datos.getDescripcionEjercicio());
+        ejercicio.setMusculos(datos.getMusculos());
+        ejercicio.setMet(datos.getMet());
+
+        Ejercicio ejercicioActualizado = ejercicioRepository.save(ejercicio);
+
+        return new EjercicioDTO(
+                ejercicioActualizado.getIdEjercicio(),
+                ejercicioActualizado.getNombreEjercicio(),
+                ejercicioActualizado.getDescripcionEjercicio(),
+                ejercicioActualizado.getFotoEjercicio(),
+                ejercicioActualizado.getMusculos(),
+                ejercicioActualizado.getMet()
         );
     }
 }

@@ -46,4 +46,23 @@ public class EjercicioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PutMapping(value = "actualizarEjercicio/{id}", consumes = "multipart/form-data")
+    public ResponseEntity<EjercicioDTO> actualizarEjercicio(
+            @PathVariable Integer id,
+            @RequestPart("datos") ExercisesCreateDTO datos,
+            @RequestPart("fotoEjercicio") MultipartFile fotoEjercicio
+    ) {
+        datos.setFotoEjercicio(fotoEjercicio);
+
+        try {
+            EjercicioDTO ejercicioActualizado = ejercicioService.actualizarEjercicio(id, datos);
+            return ResponseEntity.ok(ejercicioActualizado);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }

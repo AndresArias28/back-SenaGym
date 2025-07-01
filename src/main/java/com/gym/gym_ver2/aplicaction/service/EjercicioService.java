@@ -10,4 +10,6 @@ public interface EjercicioService {
     List<EjercicioDTO> obtenerEjercicios();
 
     EjercicioDTO crearEjercicio(ExercisesCreateDTO datos);
+
+    EjercicioDTO actualizarEjercicio(Integer id, ExercisesCreateDTO datos);
 }
