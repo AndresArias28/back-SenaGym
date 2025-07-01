@@ -37,4 +37,7 @@ public class Ejercicio {
     @Column(name = "met", nullable = false, precision = 1)
     private Double met;
 
+    @Column(name = "image_public_id")
+    private String imagePublicId;
+
 }

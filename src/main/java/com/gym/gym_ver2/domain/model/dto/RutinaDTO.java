@@ -26,7 +26,6 @@ public class RutinaDTO {
         private Integer idEjercicio;
         private String nombre;
         private String descripcion;
-//        private String fotoEjercicio;
         private String musculos;
         private Integer series;
         private Integer repeticion;
@@ -34,7 +33,7 @@ public class RutinaDTO {
         private Integer duracion;
         private Integer calorias;
         private Integer orden;
-        private Integer tiempoDescanso;
+
     }
 
 }

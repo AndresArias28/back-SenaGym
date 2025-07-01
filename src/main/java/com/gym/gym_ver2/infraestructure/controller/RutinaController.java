@@ -90,5 +90,25 @@ public class RutinaController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping(value = "/obtenerRutina/{id}")
+    public ResponseEntity<RutinaDTO> obtenerRutina(@PathVariable Integer id) {
+        try {
+            RutinaDTO rutina = rutinaService.obtenerRutinaPorId(id);
+            if (rutina != null) {
+                return ResponseEntity.ok(rutina);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+
+
+
 
 }
