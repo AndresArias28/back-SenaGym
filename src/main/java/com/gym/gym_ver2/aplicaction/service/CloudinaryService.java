@@ -35,5 +35,13 @@ public class CloudinaryService {
     public Map deleteFile(String publicId) throws IOException {
         return cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
     }
+
+    public void deleteImage(String imagePublicId) {
+        try {
+            cloudinary.uploader().destroy(imagePublicId, ObjectUtils.emptyMap());
+        } catch (IOException e) {
+            throw new RuntimeException("Error al eliminar la imagen: " + e.getMessage());
+        }
+    }
 }
 
