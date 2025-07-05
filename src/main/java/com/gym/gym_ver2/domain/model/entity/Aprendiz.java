@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @SuperBuilder
@@ -17,6 +19,9 @@ public class Aprendiz extends Persona {
 
     @Column(name = "ficha")
     private Integer ficha;
+
+    @OneToMany(mappedBy = "aprendiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AsignacionRutina> asignacionesRutina;
 
     @Column(name = "jornada")
     private String jornada;

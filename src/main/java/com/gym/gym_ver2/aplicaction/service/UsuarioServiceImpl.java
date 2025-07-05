@@ -44,6 +44,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 String apellidos = (persona != null) ? persona.getApellidos() : null;
                 Integer idRol = (rol != null) ? rol.getIdRol() : null;
                 return new UsuarioDTO(
+                                persona.getIdPersona(),
                                 nombres,
                                 apellidos,
                                 usr.getNombreUsuario(),
@@ -59,6 +60,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .orElse(null);
         assert usuario != null;
         return new UsuarioDTO(
+                usuario.getPersona().getIdPersona(),
                 usuario.getNombreUsuario(),
                 usuario.getEmailUsuario(),
                 usuario.getPersona().getNombres(),

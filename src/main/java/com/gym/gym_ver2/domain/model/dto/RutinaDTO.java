@@ -33,6 +33,8 @@ public class RutinaDTO {
         private Integer duracion;
         private Integer calorias;
         private Integer orden;
+        private Boolean asignacion;
+
 
     }
 

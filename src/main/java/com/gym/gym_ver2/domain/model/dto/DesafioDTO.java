@@ -2,6 +2,8 @@ package com.gym.gym_ver2.domain.model.dto;
 
 import com.gym.gym_ver2.domain.model.entity.DesafioRealizado;
 import lombok.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -14,7 +16,7 @@ public class DesafioDTO {
     private String descripcion;
     private String fotoDesafio;
     private String estado;
-    private String fechaFin;
+    private LocalDateTime fechaFin;
     private List<DesafioRealizado> desafiosRealizados;
 
 }

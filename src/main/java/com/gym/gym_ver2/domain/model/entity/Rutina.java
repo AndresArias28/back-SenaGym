@@ -21,6 +21,9 @@ public class Rutina {
     @OneToMany(mappedBy = "rutina", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RutinaEjercicio> rutinaEjercicios;
 
+    @OneToMany(mappedBy = "rutina", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AsignacionRutina> asignacionRutinas;
+
     @Column(name = "nombre_rutina")
     private String nombre;
 
