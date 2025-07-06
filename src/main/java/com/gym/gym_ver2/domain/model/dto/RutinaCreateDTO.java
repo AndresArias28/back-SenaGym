@@ -37,6 +37,7 @@ public class RutinaCreateDTO {
         private Integer calorias;
         private Integer orden;
         private Integer tiempoDescanso;
+        private Boolean asignacion;
     }
 
 }

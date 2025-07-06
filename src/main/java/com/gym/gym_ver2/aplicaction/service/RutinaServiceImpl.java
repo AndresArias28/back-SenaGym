@@ -91,7 +91,8 @@ public class RutinaServiceImpl implements  RutinaService {
                         .repeticiones(ejDto.getRepeticion())
                         .carga(ejDto.getCarga())
                         .duracion(ejDto.getDuracion())
-                        .calorias(0) // Inicializar calorías en 0
+                        .calorias(0)
+                        .asignacion(false)
                         .build();
             }).collect(Collectors.toList());
 
@@ -118,6 +119,7 @@ public class RutinaServiceImpl implements  RutinaService {
                         .repeticion(re.getRepeticiones())
                         .carga(re.getCarga())
                         .duracion(re.getDuracion())
+                        .asignacion(re.getAsignacion())
                         .build();
             }).collect(Collectors.toList());
 

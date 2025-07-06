@@ -1,6 +1,7 @@
 package com.gym.gym_ver2.aplicaction.service;
 
 import com.gym.gym_ver2.domain.model.dto.EjercicioDTO;
+import com.gym.gym_ver2.domain.model.dto.ExcerciseDTO;
 import com.gym.gym_ver2.domain.model.dto.ExercisesCreateDTO;
 import com.gym.gym_ver2.domain.model.entity.Ejercicio;
 import com.gym.gym_ver2.infraestructure.exceptions.RecursoNoEncontradoException;
@@ -42,10 +43,10 @@ public class EjercicioServiceImpl implements EjercicioService {
 
     @Override
     @Transactional
-    public EjercicioDTO crearEjercicio(ExercisesCreateDTO ejercicioDTO) {
+    public EjercicioDTO crearEjercicio(ExcerciseDTO ejercicioDTO, MultipartFile fotoEjercicio) {
         String imagenUrl = null;
         String imagenPublicId = null;
-        MultipartFile image = ejercicioDTO.getFotoEjercicio();
+        MultipartFile image = fotoEjercicio;
 
         if (image != null && !image.isEmpty()) {
             try {
@@ -96,10 +97,28 @@ public class EjercicioServiceImpl implements EjercicioService {
             }
         }
 
-        ejercicio.setNombreEjercicio(datos.getNombreEjercicio());
-        ejercicio.setDescripcionEjercicio(datos.getDescripcionEjercicio());
-        ejercicio.setMusculos(datos.getMusculos());
-        ejercicio.setMet(datos.getMet());
+       if(datos.getNombreEjercicio() != null && !datos.getNombreEjercicio().isEmpty()) {
+            ejercicio.setNombreEjercicio(datos.getNombreEjercicio());
+        }
+
+        if(datos.getDescripcionEjercicio() != null && !datos.getDescripcionEjercicio().isEmpty()) {
+            ejercicio.setDescripcionEjercicio(datos.getDescripcionEjercicio());
+        }
+
+        if(datos.getMusculos() != null && !datos.getMusculos().isEmpty()) {
+            ejercicio.setMusculos(datos.getMusculos());
+        }
+
+        if(datos.getMet() != null) {
+            ejercicio.setMet(datos.getMet());
+        }
+
+        // Actualizar los campos del ejercicio
+//       }
+//        ejercicio.setNombreEjercicio(datos.getNombreEjercicio());
+//        ejercicio.setDescripcionEjercicio(datos.getDescripcionEjercicio());
+//        ejercicio.setMusculos(datos.getMusculos());
+//        ejercicio.setMet(datos.getMet());
 
         Ejercicio ejercicioActualizado = ejercicioRepository.save(ejercicio);
 
@@ -111,5 +130,19 @@ public class EjercicioServiceImpl implements EjercicioService {
                 ejercicioActualizado.getMusculos(),
                 ejercicioActualizado.getMet()
         );
+    }
+
+    @Override
+    public void eliminarEjercicio(Integer id) {
+        Ejercicio ejercicio = ejercicioRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Ejercicio no encontrado con ID: " + id));
+
+        // Eliminar la imagen de Cloudinary si existe
+        if (ejercicio.getImagePublicId() != null) {
+            cloudinaryService.deleteImage(ejercicio.getImagePublicId());
+        }
+
+        ejercicioRepository.delete(ejercicio);
+
     }
 }
