@@ -18,6 +18,7 @@ public class GymVer2Application {
 		dotenv.entries().forEach(entry ->
 				System.setProperty(entry.getKey(), entry.getValue())
 		);
+		System.out.println("SECRET_KEY: " + System.getProperty("SECRET_KEY"));
 		SpringApplication.run(GymVer2Application.class, args);
 	}
 

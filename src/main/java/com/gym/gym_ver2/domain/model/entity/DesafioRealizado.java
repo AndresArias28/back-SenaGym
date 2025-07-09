@@ -25,8 +25,8 @@ public class DesafioRealizado {
     private Desafio desafio;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
-    private Usuario usuario;
+    @JoinColumn(name = "id_persona", referencedColumnName = "id_persona")
+    private Aprendiz aprendiz;
 
     @OneToMany(mappedBy = "desafioRealizado", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<RutinaRealizada> rutinasRealizadas;
@@ -38,6 +38,8 @@ public class DesafioRealizado {
     private LocalDateTime fechaFinDesafio;
 
     @Column(name = "estado")
-    private String estado;
+    private String estadoDesafio;
+
+
 
 }
