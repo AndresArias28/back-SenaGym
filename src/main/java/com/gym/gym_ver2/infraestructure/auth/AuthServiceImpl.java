@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -62,8 +63,20 @@ public class AuthServiceImpl implements  AuthService {
             System.out.println("Email del usuario: " + rq.getEmailUsuario());
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(rq.getEmailUsuario());//cargar el usuario de la base de datos
             System.out.println("detalles del usuario: " + userDetails.getUsername());
+
             HashMap<String, Object> tokenExtraClaim = new HashMap<>(); //crear un objeto de tipo HashMap
             tokenExtraClaim.put("sub", rq.getEmailUsuario());//agregar el email del usuario al token
+            Optional<Usuario> userByEmail =userRepository.findByEmailUsuario(rq.getEmailUsuario());
+
+            Integer idPersona = userByEmail.map(Usuario::getPersona).map(aprendiz -> aprendiz.getIdPersona()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            System.out.println("idPersona: " + idPersona);
+            Integer idUSer = userByEmail.map(Usuario::getIdUsuario).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            String nombreUsuario = userByEmail.map(Usuario::getNombreUsuario).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            System.out.println("ID del usuario: " + idUSer);
+            tokenExtraClaim.put("id_usuario", idUSer);
+            tokenExtraClaim.put("id_persona", idPersona);
+            tokenExtraClaim.put("nombre_usuario", nombreUsuario);
+
             String token = jwtService.generateToken(tokenExtraClaim, userDetails);// generar el token segun el email del usuario
             System.out.println("Token generado: " + token);
             return AuthResponse.builder().token(token).build();//crear la respuesta con el token y retornarla
@@ -132,8 +145,8 @@ public class AuthServiceImpl implements  AuthService {
                 .fotoPerfil(imageUrl)
                 .imagePublicId(imagePublicId)
                 .estado(rq.getEstado())
-                .puntosAcumulados(0) //  puntos acumulados en 0
-                .horasAcumuladas(0)
+//                .puntosAcumulados(0) //  puntos acumulados en 0
+//                .horasAcumuladas(0)
                 .build();
 
         //guardar el usuario en la base de datos

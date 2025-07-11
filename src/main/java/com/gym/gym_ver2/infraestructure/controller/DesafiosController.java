@@ -1,0 +1,56 @@
+package com.gym.gym_ver2.infraestructure.controller;
+
+import com.gym.gym_ver2.aplicaction.service.DesafiosRealizadosService;
+import com.gym.gym_ver2.domain.model.dto.DesafioRealizadoRequestDTO;
+import com.gym.gym_ver2.domain.model.dto.DesafioRealizadoResponse;
+import com.gym.gym_ver2.domain.model.dto.DesafiosUsuarioDAO;
+import com.gym.gym_ver2.domain.model.entity.Usuario;
+import com.gym.gym_ver2.infraestructure.jwt.JwtConfig;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Tag(name = "Desafios  Controller", description = "Endpoints para gestionar los desafios usuarios")
+@RestController
+@RequestMapping("/desafios")
+@RequiredArgsConstructor
+public class DesafiosController {
+
+    private final DesafiosRealizadosService desafiosServices;
+
+    @GetMapping("/obtenerDesafioActual")
+    public ResponseEntity<?> obtenerDesafios(@AuthenticationPrincipal Usuario usuario) {
+
+        try{
+            Integer idUsuario = usuario.getIdUsuario().intValue();
+            DesafiosUsuarioDAO desafios = desafiosServices.obtenerDesafioActuaPorUsuario(idUsuario);
+
+            return ResponseEntity.ok(desafios);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @PostMapping("/registrarDesafioARealizar")
+    public ResponseEntity<DesafioRealizadoResponse> crearDesafio(
+            @AuthenticationPrincipal Usuario usuario,
+            @RequestBody DesafioRealizadoRequestDTO request
+    ) {
+        try {
+            Integer idAprendiz = usuario.getPersona().getIdPersona();
+            DesafioRealizadoResponse desafioCreado = desafiosServices.crearDesafioRealizado(idAprendiz, request.getIdDesafio());
+            return ResponseEntity.status(HttpStatus.CREATED).body(desafioCreado);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+}

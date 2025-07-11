@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "usuario", uniqueConstraints = { @UniqueConstraint(columnNames = "email_usuario"),  @UniqueConstraint(columnNames = "contrasena_usuario")})
+@Table(name = "usuario")
 public class Usuario implements UserDetails  {
 
     @Id
@@ -25,9 +25,6 @@ public class Usuario implements UserDetails  {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_rol", referencedColumnName = "id_rol", nullable = false)
     private Rol idRol;
-
-    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DesafioRealizado> desafioRealizados;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_persona")
@@ -48,14 +45,11 @@ public class Usuario implements UserDetails  {
     @Column(name = "foto_perfil")
     private String fotoPerfil;
 
-    @Column(name = "puntos_acumulados")
-    private Integer puntosAcumulados;
-
-    @Column(name = "horas_acumuladas")
-    private Integer horasAcumuladas;
-
     @Column(name = "image_public_id")
     private String imagePublicId;
+
+    @Transient
+    private Collection<? extends GrantedAuthority> authorities;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -66,12 +60,12 @@ public class Usuario implements UserDetails  {
 
     @Override
     public String getPassword() {
-        return "";
+        return this.contrasenaUsuario;
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return this.emailUsuario;
     }
 
     @Override

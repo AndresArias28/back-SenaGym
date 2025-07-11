@@ -23,6 +23,9 @@ public class Aprendiz extends Persona {
     @OneToMany(mappedBy = "aprendiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AsignacionRutina> asignacionesRutina;
 
+    @OneToMany(mappedBy = "aprendiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DesafioRealizado> desafiosRealizados;
+
     @Column(name = "jornada")
     private String jornada;
 

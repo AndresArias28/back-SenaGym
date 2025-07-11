@@ -7,6 +7,8 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.*;
 import java.util.HashMap;
@@ -50,11 +52,13 @@ public class JwtService {
     
     // Obtener la clave secreta en formato Key
     public  Key getKey() {
-        byte[] secretEncode = Decoders.BASE64.decode(this.getClave()); // Decodificar la clave secreta en base64
-        if (secretEncode.length < 32) {
-            throw new IllegalArgumentException("La clave secreta debe tener al menos 32 bytes (256 bits) después de decodificarla.");
+        String clave = this.getClave();
+        byte[] keyBytes = clave.getBytes(StandardCharsets.UTF_8);
+        if (keyBytes.length < 32) {
+            throw new IllegalArgumentException("La clave debe tener al menos 32 caracteres.");
         }
-        return Keys.hmacShaKeyFor(secretEncode);//devuelve una clave secreta
+
+        return Keys.hmacShaKeyFor(keyBytes);//devuelve una clave secreta
     }
 
     // Validar el token con el usuario y la información adicional

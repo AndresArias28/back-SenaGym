@@ -14,7 +14,6 @@ public class LoginRequest {
     public String getEmailUsuario() {
         return emailUsuario;
     }
-
     public String getContrasenaUsuario() {
         return contrasenaUsuario;
     }
