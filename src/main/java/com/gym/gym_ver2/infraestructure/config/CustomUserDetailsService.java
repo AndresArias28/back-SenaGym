@@ -23,12 +23,25 @@ public class CustomUserDetailsService implements UserDetailsService {
         Usuario usuario = userRepository.findByEmailUsuario(email)
                 .orElseThrow(() ->   new UsernameNotFoundException("Usuario no encontrado con email: " + email));
         System.out.println("Usuario encontrado: " + usuario.getEmailUsuario());
+
+        if (usuario.getContrasenaUsuario() == null || usuario.getContrasenaUsuario().isBlank()) {
+            throw new RuntimeException("El usuario tiene una contraseña vacía o nula");
+        }
+
+        if (usuario.getEmailUsuario() == null || usuario.getEmailUsuario().isBlank()) {
+            throw new RuntimeException("El usuario no tiene un correo válido");
+        }
+        // Asignar roles al usuario y devolver un objeto UserDetails
         List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(usuario.getIdRol().getNombreRol()));
+        usuario.setAuthorities(authorities);
+
+
         System.out.println("Authorities: " + authorities);
-        return new org.springframework.security.core.userdetails.User(// Devuelve un objeto UserDetails
-                usuario.getEmailUsuario(),
-                usuario.getContrasenaUsuario(), // Contraseña encriptada de la base de datos
-                authorities // Lista de roles del usuario
-        );
+//        return new org.springframework.security.core.userdetails.User(// Devuelve un objeto UserDetails
+//                usuario.getEmailUsuario(),
+//                usuario.getContrasenaUsuario(), // Contraseña encriptada de la base de datos
+//                authorities // Lista de roles del usuario
+//        );
+        return  usuario;
     }
 }

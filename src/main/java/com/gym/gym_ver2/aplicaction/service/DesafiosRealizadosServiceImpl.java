@@ -1,5 +1,6 @@
 package com.gym.gym_ver2.aplicaction.service;
 
+import com.gym.gym_ver2.domain.model.dto.DesafioRealizadoResponse;
 import com.gym.gym_ver2.domain.model.dto.DesafiosUsuarioDAO;
 import com.gym.gym_ver2.domain.model.entity.Aprendiz;
 import com.gym.gym_ver2.domain.model.entity.Desafio;
@@ -47,8 +48,6 @@ public class DesafiosRealizadosServiceImpl implements  DesafiosRealizadosService
                 .filter(d -> "En progreso".equalsIgnoreCase(d.getEstadoDesafio()))
                 .findFirst();
 
-
-
         DesafioRealizado desafioRealizado;
 
         if (enProgreso.isPresent() ) {
@@ -67,7 +66,6 @@ public class DesafiosRealizadosServiceImpl implements  DesafiosRealizadosService
             desafioRealizado.setFechaInicioDesafio(desafioRealizado.getFechaInicioDesafio());
             desafioRealizado.setFechaFinDesafio(null);
             desafioRealizado = desafioRealizadoRepository.save(desafioRealizado);
-
         }
 
         //obtener puntos del aprendiz
@@ -77,7 +75,7 @@ public class DesafiosRealizadosServiceImpl implements  DesafiosRealizadosService
                 .sum()
                 : 0;
 
-         DesafiosUsuarioDAO desafiosUsuarioDAO = new DesafiosUsuarioDAO();
+        DesafiosUsuarioDAO desafiosUsuarioDAO = new DesafiosUsuarioDAO();
 
         desafiosUsuarioDAO.setIdDesafio(desafioRealizado.getDesafio().getIdDesafio());
         desafiosUsuarioDAO.setNombreDesafio(desafioRealizado.getDesafio().getNombreDesafio());
@@ -86,9 +84,34 @@ public class DesafiosRealizadosServiceImpl implements  DesafiosRealizadosService
         desafiosUsuarioDAO.setFechaInicioDesafio(desafioRealizado.getFechaInicioDesafio());
         desafiosUsuarioDAO.setFechaFinDesafio(desafioRealizado.getFechaFinDesafio());
         desafiosUsuarioDAO.setPuntosAcumulados(puntos);
-
-
         return  desafiosUsuarioDAO;
+    }
+
+    @Override
+    public DesafioRealizadoResponse crearDesafioRealizado(Integer idAprendiz, Integer idDesafio) {
+        if (idDesafio == null || idAprendiz == null) {
+            throw new IllegalArgumentException("ID del desafío o del aprendiz no puede ser null");
+        }
+
+        Desafio desafio = desafioRepository.findById(idDesafio)
+                .orElseThrow(() -> new RuntimeException("Desafío no encontrado"));
+
+        Aprendiz aprendiz = aprendizRepository.findById(idAprendiz)
+                .orElseThrow(() -> new RuntimeException("Aprendiz no encontrado"));
+
+        DesafioRealizado nuevo = DesafioRealizado.builder()
+                .desafio(desafio)
+                .aprendiz(aprendiz)
+                .fechaInicioDesafio(LocalDateTime.now())
+                .estadoDesafio("En Progreso")
+                .build();
+
+        DesafioRealizado guardado = desafioRealizadoRepository.save(nuevo);
+
+        return new DesafioRealizadoResponse(
+                guardado.getIdDesafioRealizado(),
+                guardado.getEstadoDesafio()
+        );
     }
 
 }
