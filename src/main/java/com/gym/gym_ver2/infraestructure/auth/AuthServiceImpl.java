@@ -71,9 +71,12 @@ public class AuthServiceImpl implements  AuthService {
             Integer idPersona = userByEmail.map(Usuario::getPersona).map(aprendiz -> aprendiz.getIdPersona()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
             System.out.println("idPersona: " + idPersona);
             Integer idUSer = userByEmail.map(Usuario::getIdUsuario).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-            System.out.println("ID del usuario: " + idUSer);//obtener el id del usuario
+            String nombreUsuario = userByEmail.map(Usuario::getNombreUsuario).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            System.out.println("ID del usuario: " + idUSer);
             tokenExtraClaim.put("id_usuario", idUSer);
             tokenExtraClaim.put("id_persona", idPersona);
+            tokenExtraClaim.put("nombre_usuario", nombreUsuario);
+
             String token = jwtService.generateToken(tokenExtraClaim, userDetails);// generar el token segun el email del usuario
             System.out.println("Token generado: " + token);
             return AuthResponse.builder().token(token).build();//crear la respuesta con el token y retornarla
