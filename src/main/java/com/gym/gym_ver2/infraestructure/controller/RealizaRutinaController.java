@@ -32,13 +32,10 @@ public class RealizaRutinaController {
 
     @PatchMapping("/serie")
     public ResponseEntity<SerieAvanceResponse> avanzarSerie(@RequestBody SerieAvanceRequest serieAvanceRq) {
-        try {
+
             SerieAvanceResponse avance = rutinaRealizadaService.avanzarSerie(serieAvanceRq);
             return ResponseEntity.ok(avance);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+
     }
 
 

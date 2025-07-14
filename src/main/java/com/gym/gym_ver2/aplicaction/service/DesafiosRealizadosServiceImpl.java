@@ -100,6 +100,7 @@ public class DesafiosRealizadosServiceImpl implements  DesafiosRealizadosService
                 .orElseThrow(() -> new RuntimeException("Aprendiz no encontrado"));
 
         DesafioRealizado nuevo = DesafioRealizado.builder()
+
                 .desafio(desafio)
                 .aprendiz(aprendiz)
                 .fechaInicioDesafio(LocalDateTime.now())

@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -21,14 +24,18 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RecursoNoEncontradoException.class)
-    public ResponseEntity<String> manejarRecursoNoEncontrado(RecursoNoEncontradoException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<?> manejarRecursoNoEncontrado(RecursoNoEncontradoException ex) {
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("error", true);
+        respuesta.put("mensaje", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> manejarErroresGenerales(Exception ex) {
-        ex.printStackTrace(); // Para depuración
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Ocurrió un error inesperado.");
+    public ResponseEntity<Map<String, Object>> manejarErroresGenerales(Exception ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("mensaje", "Error interno: " + ex.getMessage());
+        error.put("error", true);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 }
