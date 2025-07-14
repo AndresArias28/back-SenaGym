@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@Tag(name = "Auth Controller", description = "Endpoints para gestion de usuarios")
+@Tag(name = "Usuario Controller", description = "Endpoints para gestion de usuarios")
 @RequestMapping("/user")
 @RestController
 public class UsuarioControler {

@@ -27,7 +27,7 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
 
     @Override
     @Transactional
-    public RutinaRealizadaDTO crearRutina(RutinaRealizadaDTO rutinaRealizadaDTO) {
+    public RutinaRealizadaDTO   crearRutina(RutinaRealizadaDTO rutinaRealizadaDTO) {
 
         DesafioRealizado desafio = desafioUsuarioRepository.findById(rutinaRealizadaDTO.getDesafioRealizado())
                 .orElseThrow(() -> new RuntimeException("Desafío no encontrado"));
