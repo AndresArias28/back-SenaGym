@@ -18,14 +18,14 @@ import java.util.stream.Collectors;
 @Service//interfaz que carga los datos específicos del usuario. Servicio que se encarga de la creacion y validacion de los tokens
 public class JwtService {
 
-    private final JwtConfig jwtConfig;// Configuración del JWT, contiene la clave secreta
+    private final JwtProperties jwtConfig;// Configuración del JWT, contiene la clave secreta
 
-    public JwtService(JwtConfig jwtConfig) {//  recibe la configuración del JWT
+    public JwtService(JwtProperties jwtConfig) {//  recibe la configuración del JWT
         this.jwtConfig = jwtConfig;
     }
 
     public String getClave() {// obtener la clave secreta del JWT
-        return jwtConfig.getSecretKey();
+        return jwtConfig.getSecret();
     }
 
     public String createToken(UserDetails usuario) {

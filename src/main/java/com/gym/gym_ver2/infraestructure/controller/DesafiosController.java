@@ -5,7 +5,6 @@ import com.gym.gym_ver2.domain.model.dto.DesafioRealizadoRequestDTO;
 import com.gym.gym_ver2.domain.model.dto.DesafioRealizadoResponse;
 import com.gym.gym_ver2.domain.model.dto.DesafiosUsuarioDAO;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
-import com.gym.gym_ver2.infraestructure.jwt.JwtConfig;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

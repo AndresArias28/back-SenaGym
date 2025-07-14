@@ -23,6 +23,7 @@ public class RutinaDTO {
     @Data
     @Builder
     public static class RutinaEjercicioDTO {
+        private Integer idRutinaEjercicio;
         private Integer idEjercicio;
         private String nombre;
         private String descripcion;
@@ -34,8 +35,5 @@ public class RutinaDTO {
         private Integer calorias;
         private Integer orden;
         private Boolean asignacion;
-
-
     }
-
 }

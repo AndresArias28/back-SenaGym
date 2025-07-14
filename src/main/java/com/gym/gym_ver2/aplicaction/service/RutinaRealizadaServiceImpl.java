@@ -34,7 +34,6 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
                 .rutinaEjercicio(rutinaEjercicio)
                 .series(rutinaRealizadaDTO.getSeriesRealizadas())
                 .repeticiones(rutinaRealizadaDTO.getRepeticionesRealizadas())
-                .carga(rutinaRealizadaDTO.getCargaRealizada())
                 .estado(rutinaRealizadaDTO.getEstado())
                 .build();
 
@@ -45,7 +44,6 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
                 .rutinaEjercicio(nuevaRutina.getRutinaEjercicio().getIdRutinaEjercicio())
                 .seriesRealizadas(nuevaRutina.getSeries())
                 .repeticionesRealizadas(nuevaRutina.getRepeticiones())
-                .cargaRealizada(nuevaRutina.getCarga())
                 .estado(nuevaRutina.getEstado())
                 .build();
     }
