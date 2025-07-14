@@ -2,6 +2,8 @@ package com.gym.gym_ver2.infraestructure.controller;
 
 import com.gym.gym_ver2.aplicaction.service.RutinaRealizadaService;
 import com.gym.gym_ver2.domain.model.dto.RutinaRealizadaDTO;
+import com.gym.gym_ver2.domain.model.dto.SerieAvanceRequest;
+import com.gym.gym_ver2.domain.model.dto.SerieAvanceResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,17 @@ public class RealizaRutinaController {
         try {
             RutinaRealizadaDTO nuevaRutina = rutinaRealizadaService.crearRutina(rutinaRealizadaDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaRutina);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PatchMapping("/serie")
+    public ResponseEntity<SerieAvanceResponse> avanzarSerie(@RequestBody SerieAvanceRequest serieAvanceRq) {
+        try {
+            SerieAvanceResponse avance = rutinaRealizadaService.avanzarSerie(serieAvanceRq);
+            return ResponseEntity.ok(avance);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

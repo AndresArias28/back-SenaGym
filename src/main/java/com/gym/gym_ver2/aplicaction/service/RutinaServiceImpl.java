@@ -302,7 +302,9 @@ public class RutinaServiceImpl implements  RutinaService {
 
         List<RutinaDTO.RutinaEjercicioDTO> ejercicioDTOs = ejercicios.stream().map(re -> {
             Ejercicio ej = re.getEjercicio();
+//            RutinaEjercicio rutinaEjercicio = re
             return RutinaDTO.RutinaEjercicioDTO.builder()
+                    .idRutinaEjercicio(re.getIdRutinaEjercicio())
                     .idEjercicio(ej.getIdEjercicio())
                     .nombre(ej.getNombreEjercicio())
                     .descripcion(ej.getDescripcionEjercicio())

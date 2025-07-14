@@ -33,9 +33,6 @@ public class RutinaRealizada {
     @Column(name = "series")
     private Integer series;
 
-    @Column(name = "carga")
-    private Integer carga;
-
     @Column(name = "estado")
     private String estado;
 
