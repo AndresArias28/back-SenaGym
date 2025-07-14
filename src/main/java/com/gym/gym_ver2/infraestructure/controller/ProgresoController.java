@@ -24,16 +24,7 @@ public class ProgresoController {
 
     private final ProgresoService progresoService;
 
-//    @PostMapping("/registrarProgreso")
-//    public ResponseEntity<?> registrarProgreso(@RequestBody ProgresoRequest progresoRequest) {
-//        try{
-//            Map<String, Object> respuesta = progresoService.registrarOActualizarProgreso(progresoRequest);
-//            return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
-//        }catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-//    }
+
 
     @PostMapping("/iniciar")
     public ResponseEntity<?> iniciarRutina(@RequestBody IniciarRutinaRequest request) {
