@@ -6,6 +6,7 @@ import com.gym.gym_ver2.domain.model.dto.SerieAvanceResponse;
 import com.gym.gym_ver2.domain.model.entity.DesafioRealizado;
 import com.gym.gym_ver2.domain.model.entity.RutinaEjercicio;
 import com.gym.gym_ver2.domain.model.entity.RutinaRealizada;
+import com.gym.gym_ver2.infraestructure.exceptions.RecursoNoEncontradoException;
 import com.gym.gym_ver2.infraestructure.persistence.repository.DesafiosRealizadosRepository;
 import com.gym.gym_ver2.infraestructure.persistence.repository.RutinaEjerciciosRepository;
 import com.gym.gym_ver2.infraestructure.persistence.repository.RutinaRealizadaRepository;
@@ -60,7 +61,7 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
                         request.getIdDesafioRealizado(),
                         request.getIdRutinaEjercicio()
                 )
-                .orElseThrow(() -> new RuntimeException("Progreso no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Progreso no encontrado"));
 
         // Incrementar serie
         progreso.setSeries(progreso.getSeries() + 1);
