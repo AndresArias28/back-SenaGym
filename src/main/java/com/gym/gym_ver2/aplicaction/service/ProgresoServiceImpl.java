@@ -5,6 +5,7 @@ import com.gym.gym_ver2.domain.model.dto.ProgresoRequest;
 import com.gym.gym_ver2.domain.model.entity.DesafioRealizado;
 import com.gym.gym_ver2.domain.model.entity.RutinaEjercicio;
 import com.gym.gym_ver2.domain.model.entity.RutinaRealizada;
+import com.gym.gym_ver2.infraestructure.exceptions.RecursoNoEncontradoException;
 import com.gym.gym_ver2.infraestructure.persistence.repository.DesafiosRealizadosRepository;
 import com.gym.gym_ver2.infraestructure.persistence.repository.RutinaEjerciciosRepository;
 import com.gym.gym_ver2.infraestructure.persistence.repository.RutinaRealizadaRepository;
@@ -79,7 +80,7 @@ public class ProgresoServiceImpl implements ProgresoService {
         List<RutinaEjercicio> ejercicios = rutinaEjerciciosRepo.findAllByRutina_IdRutina(request.getIdRutina());
 
         DesafioRealizado desafio = desafiosRealizadosRepo.findById(request.getIdDesafioRealizado())
-                .orElseThrow(() -> new RuntimeException("Desafío no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Desafío no encontrado"));
 
         List<RutinaRealizada> registrosCreados = new ArrayList<>();
 

@@ -1,5 +1,6 @@
 package com.gym.gym_ver2.aplicaction.service;
 
+import com.gym.gym_ver2.domain.model.dto.ActualizarFechaInicioRequest;
 import com.gym.gym_ver2.domain.model.dto.RutinaRealizadaDTO;
 import com.gym.gym_ver2.domain.model.dto.SerieAvanceRequest;
 import com.gym.gym_ver2.domain.model.dto.SerieAvanceResponse;
@@ -25,34 +26,34 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
     private final DesafiosRealizadosRepository desafioUsuarioRepository;
     private final RutinaEjerciciosRepository rutinaEjerciciosRepository;
 
-    @Override
-    @Transactional
-    public RutinaRealizadaDTO crearRutina(RutinaRealizadaDTO rutinaRealizadaDTO) {
-
-        DesafioRealizado desafio = desafioUsuarioRepository.findById(rutinaRealizadaDTO.getDesafioRealizado())
-                .orElseThrow(() -> new RuntimeException("Desafío no encontrado"));
-
-        RutinaEjercicio rutinaEjercicio = rutinaEjerciciosRepository.findById(rutinaRealizadaDTO.getRutinaEjercicio())
-                .orElseThrow(() -> new RuntimeException("Rutina de ejercicio no encontrada"));
-
-        RutinaRealizada rutinaRealizada = RutinaRealizada.builder()
-                .desafioRealizado(desafio)
-                .rutinaEjercicio(rutinaEjercicio)
-                .series(rutinaRealizadaDTO.getSeriesRealizadas())
-                .repeticiones(rutinaRealizadaDTO.getRepeticionesRealizadas())
-                .estado(rutinaRealizadaDTO.getEstado())
-                .build();
-
-        RutinaRealizada nuevaRutina = rutinaRealizadaRepository.save(rutinaRealizada);
-
-        return RutinaRealizadaDTO.builder()
-                .desafioRealizado(nuevaRutina.getDesafioRealizado().getIdDesafioRealizado())
-                .rutinaEjercicio(nuevaRutina.getRutinaEjercicio().getIdRutinaEjercicio())
-                .seriesRealizadas(nuevaRutina.getSeries())
-                .repeticionesRealizadas(nuevaRutina.getRepeticiones())
-                .estado(nuevaRutina.getEstado())
-                .build();
-    }
+//    @Override
+//    @Transactional
+//    public RutinaRealizadaDTO crearRutina(RutinaRealizadaDTO rutinaRealizadaDTO) {
+//
+//        DesafioRealizado desafio = desafioUsuarioRepository.findById(rutinaRealizadaDTO.getDesafioRealizado())
+//                .orElseThrow(() -> new RuntimeException("Desafío no encontrado"));
+//
+//        RutinaEjercicio rutinaEjercicio = rutinaEjerciciosRepository.findById(rutinaRealizadaDTO.getRutinaEjercicio())
+//                .orElseThrow(() -> new RuntimeException("Rutina de ejercicio no encontrada"));
+//
+//        RutinaRealizada rutinaRealizada = RutinaRealizada.builder()
+//                .desafioRealizado(desafio)
+//                .rutinaEjercicio(rutinaEjercicio)
+//                .series(rutinaRealizadaDTO.getSeriesRealizadas())
+//                .repeticiones(rutinaRealizadaDTO.getRepeticionesRealizadas())
+//                .estado(rutinaRealizadaDTO.getEstado())
+//                .build();
+//
+//        RutinaRealizada nuevaRutina = rutinaRealizadaRepository.save(rutinaRealizada);
+//
+//        return RutinaRealizadaDTO.builder()
+//                .desafioRealizado(nuevaRutina.getDesafioRealizado().getIdDesafioRealizado())
+//                .rutinaEjercicio(nuevaRutina.getRutinaEjercicio().getIdRutinaEjercicio())
+//                .seriesRealizadas(nuevaRutina.getSeries())
+//                .repeticionesRealizadas(nuevaRutina.getRepeticiones())
+//                .estado(nuevaRutina.getEstado())
+//                .build();
+//    }
 
     @Override
     public SerieAvanceResponse avanzarSerie(SerieAvanceRequest request) {
@@ -99,6 +100,16 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
         );
     }
 
+    @Override
+    public String actualizarFechaInicio(Integer id) {
+        DesafioRealizado desafioResgistrado = desafioUsuarioRepository.findById(id).orElseThrow(() -> new RecursoNoEncontradoException("Desafio realizado no encontrado"));
+
+        desafioResgistrado.setFechaInicioDesafio(LocalDateTime.now());
+
+        desafioUsuarioRepository.save(desafioResgistrado);
+
+        return "Fecha de inicio actualizada correctamente";
+    }
 
 
 }

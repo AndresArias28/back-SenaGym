@@ -9,8 +9,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Getter
-public class DesafiosUsuarioDAO {
-    private Integer idDesafioRealiado;
+public class DesafioRequest {
     private Integer idDesafio;
     private String nombreDesafio;
     private Integer numeroDesafio;
@@ -18,5 +17,4 @@ public class DesafiosUsuarioDAO {
     private LocalDateTime fechaInicioDesafio;
     private String estadoDesafio;
     private Integer puntosAcumulados;
-
 }
