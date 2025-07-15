@@ -8,5 +8,4 @@ import java.util.List;
 public interface DesafiosRealizadosService {
     DesafiosUsuarioDAO obtenerDesafioActuaPorUsuario( Integer idUsuario);
 
-//    DesafioRealizadoResponse crearDesafioRealizado(Integer idAprendiz, Integer idDesafio);
 }

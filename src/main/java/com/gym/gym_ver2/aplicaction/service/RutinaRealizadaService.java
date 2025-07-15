@@ -1,9 +1,9 @@
 package com.gym.gym_ver2.aplicaction.service;
 
-import com.gym.gym_ver2.domain.model.dto.ActualizarFechaInicioRequest;
-import com.gym.gym_ver2.domain.model.dto.RutinaRealizadaDTO;
-import com.gym.gym_ver2.domain.model.dto.SerieAvanceRequest;
-import com.gym.gym_ver2.domain.model.dto.SerieAvanceResponse;
+import com.gym.gym_ver2.domain.model.dto.*;
+import com.gym.gym_ver2.domain.model.entity.RutinaRealizada;
+
+import java.util.List;
 
 public interface RutinaRealizadaService {
 
@@ -12,4 +12,6 @@ public interface RutinaRealizadaService {
     SerieAvanceResponse avanzarSerie(SerieAvanceRequest serieAvanceRq);
 
     String actualizarFechaInicio(Integer idRutinaRealizada);
+
+    List<RutinaRealizada> iniciarRutina(IniciarRutinaRequest request);
 }

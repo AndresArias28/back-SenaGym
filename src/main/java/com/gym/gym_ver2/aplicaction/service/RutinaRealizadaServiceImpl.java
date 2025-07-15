@@ -1,9 +1,6 @@
 package com.gym.gym_ver2.aplicaction.service;
 
-import com.gym.gym_ver2.domain.model.dto.ActualizarFechaInicioRequest;
-import com.gym.gym_ver2.domain.model.dto.RutinaRealizadaDTO;
-import com.gym.gym_ver2.domain.model.dto.SerieAvanceRequest;
-import com.gym.gym_ver2.domain.model.dto.SerieAvanceResponse;
+import com.gym.gym_ver2.domain.model.dto.*;
 import com.gym.gym_ver2.domain.model.entity.DesafioRealizado;
 import com.gym.gym_ver2.domain.model.entity.RutinaEjercicio;
 import com.gym.gym_ver2.domain.model.entity.RutinaRealizada;
@@ -16,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,35 +23,7 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
     private final RutinaRealizadaRepository rutinaRealizadaRepository;
     private final DesafiosRealizadosRepository desafioUsuarioRepository;
     private final RutinaEjerciciosRepository rutinaEjerciciosRepository;
-
-//    @Override
-//    @Transactional
-//    public RutinaRealizadaDTO crearRutina(RutinaRealizadaDTO rutinaRealizadaDTO) {
-//
-//        DesafioRealizado desafio = desafioUsuarioRepository.findById(rutinaRealizadaDTO.getDesafioRealizado())
-//                .orElseThrow(() -> new RuntimeException("Desafío no encontrado"));
-//
-//        RutinaEjercicio rutinaEjercicio = rutinaEjerciciosRepository.findById(rutinaRealizadaDTO.getRutinaEjercicio())
-//                .orElseThrow(() -> new RuntimeException("Rutina de ejercicio no encontrada"));
-//
-//        RutinaRealizada rutinaRealizada = RutinaRealizada.builder()
-//                .desafioRealizado(desafio)
-//                .rutinaEjercicio(rutinaEjercicio)
-//                .series(rutinaRealizadaDTO.getSeriesRealizadas())
-//                .repeticiones(rutinaRealizadaDTO.getRepeticionesRealizadas())
-//                .estado(rutinaRealizadaDTO.getEstado())
-//                .build();
-//
-//        RutinaRealizada nuevaRutina = rutinaRealizadaRepository.save(rutinaRealizada);
-//
-//        return RutinaRealizadaDTO.builder()
-//                .desafioRealizado(nuevaRutina.getDesafioRealizado().getIdDesafioRealizado())
-//                .rutinaEjercicio(nuevaRutina.getRutinaEjercicio().getIdRutinaEjercicio())
-//                .seriesRealizadas(nuevaRutina.getSeries())
-//                .repeticionesRealizadas(nuevaRutina.getRepeticiones())
-//                .estado(nuevaRutina.getEstado())
-//                .build();
-//    }
+    private final DesafiosRealizadosRepository desafiosRealizadosRepository;
 
     @Override
     public SerieAvanceResponse avanzarSerie(SerieAvanceRequest request) {
@@ -64,12 +34,16 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
                 )
                 .orElseThrow(() -> new RecursoNoEncontradoException("Progreso no encontrado"));
 
+        int nuevasSeries = progreso.getSeries() +1;
         // Incrementar serie
-        progreso.setSeries(progreso.getSeries() + 1);
+        progreso.setSeries(nuevasSeries);
+        int repeticionesEsperadas = progreso.getRutinaEjercicio().getRepeticiones();
+        int repeticionesActuales = progreso.getRepeticiones();
+        progreso.setRepeticiones(repeticionesEsperadas + repeticionesActuales);
 
         // Verificar si completó el ejercicio
-        int objetivo = progreso.getRutinaEjercicio().getSeries();
-        boolean ejercicioCompletado = progreso.getSeries() >= objetivo;
+        int objetivoSeries = progreso.getRutinaEjercicio().getSeries();
+        boolean ejercicioCompletado = nuevasSeries >= objetivoSeries;
 
         if (ejercicioCompletado) {
             progreso.setEstado("Finalizado");
@@ -86,7 +60,7 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
 
         if (rutinaFinalizada) {
             DesafioRealizado desafio = desafioUsuarioRepository.findById(request.getIdDesafioRealizado())
-                    .orElseThrow(() -> new RuntimeException("Desafío no encontrado"));
+                    .orElseThrow(() -> new RecursoNoEncontradoException("Desafío no encontrado"));
             desafio.setEstadoDesafio("Finalizado");
             desafio.setFechaFinDesafio(LocalDateTime.now());
             desafioUsuarioRepository.save(desafio);
@@ -94,7 +68,7 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
 
         return new SerieAvanceResponse(
                 progreso.getSeries(),
-                objetivo,
+                objetivoSeries,
                 ejercicioCompletado,
                 rutinaFinalizada
         );
@@ -112,4 +86,31 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
     }
 
 
+    @Override
+    public List<RutinaRealizada> iniciarRutina(IniciarRutinaRequest request) {
+        List<RutinaEjercicio> ejercicios = rutinaEjerciciosRepository.findAllByRutina_IdRutina(request.getIdRutina());
+
+        DesafioRealizado desafio = desafiosRealizadosRepository.findById(request.getIdDesafioRealizado())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Desafío no encontrado"));
+
+        List<RutinaRealizada> registrosCreados = new ArrayList<>();
+
+        for (RutinaEjercicio ejercicio : ejercicios) {
+            boolean yaExiste = rutinaRealizadaRepository
+                    .findByDesafioRealizado_IdDesafioRealizadoAndRutinaEjercicio_IdRutinaEjercicio(request.getIdDesafioRealizado(), ejercicio.getIdRutinaEjercicio())
+                    .isPresent();
+
+            if (!yaExiste) {
+                RutinaRealizada nueva = new RutinaRealizada();
+                nueva.setDesafioRealizado(desafio);
+                nueva.setRutinaEjercicio(ejercicio);
+                nueva.setSeries(0);
+                nueva.setRepeticiones(0);
+                nueva.setEstado("En Progreso");
+
+                registrosCreados.add(rutinaRealizadaRepository.save(nueva));
+            }
+        }
+        return registrosCreados;
+    }
 }

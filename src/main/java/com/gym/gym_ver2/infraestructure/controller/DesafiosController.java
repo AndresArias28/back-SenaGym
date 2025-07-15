@@ -8,7 +8,6 @@ import com.gym.gym_ver2.domain.model.dto.DesafiosUsuarioDAO;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -27,24 +26,7 @@ public class DesafiosController {
     public ResponseEntity<DesafiosUsuarioDAO> obtenerDesafios(@AuthenticationPrincipal Usuario usuario) {
             Integer idUsuario = usuario.getIdUsuario().intValue();
             DesafiosUsuarioDAO desafios = desafiosServices.obtenerDesafioActuaPorUsuario(idUsuario);
-
             return ResponseEntity.ok(desafios);
-
-
     }
 
-//    @PostMapping("/registrarDesafioARealizar")
-//    public ResponseEntity<DesafioRealizadoResponse> crearDesafio(
-//            @AuthenticationPrincipal Usuario usuario,
-//            @RequestBody DesafioRealizadoRequestDTO request
-//    ) {
-//        try {
-//            Integer idAprendiz = usuario.getPersona().getIdPersona();
-//            DesafioRealizadoResponse desafioCreado = desafiosServices.crearDesafioRealizado(idAprendiz, request.getIdDesafio());
-//            return ResponseEntity.status(HttpStatus.CREATED).body(desafioCreado);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-//    }
 }
