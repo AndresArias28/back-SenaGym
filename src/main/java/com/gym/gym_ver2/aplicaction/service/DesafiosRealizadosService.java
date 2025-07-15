@@ -6,7 +6,7 @@ import com.gym.gym_ver2.domain.model.dto.DesafiosUsuarioDAO;
 import java.util.List;
 
 public interface DesafiosRealizadosService {
-    public DesafiosUsuarioDAO obtenerDesafioActuaPorUsuario( Integer idUsuario);
+    DesafiosUsuarioDAO obtenerDesafioActuaPorUsuario( Integer idUsuario);
 
-    DesafioRealizadoResponse crearDesafioRealizado(Integer idAprendiz, Integer idDesafio);
+//    DesafioRealizadoResponse crearDesafioRealizado(Integer idAprendiz, Integer idDesafio);
 }

@@ -1,17 +1,16 @@
 package com.gym.gym_ver2.infraestructure.controller;
 
 import com.gym.gym_ver2.aplicaction.service.ProgresoService;
+import com.gym.gym_ver2.domain.model.dto.ActualizarFechaInicioRequest;
 import com.gym.gym_ver2.domain.model.dto.IniciarRutinaRequest;
+import com.gym.gym_ver2.domain.model.dto.IniciarRutinaResponse;
 import com.gym.gym_ver2.domain.model.dto.ProgresoRequest;
 import com.gym.gym_ver2.domain.model.entity.RutinaRealizada;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
@@ -24,21 +23,15 @@ public class ProgresoController {
 
     private final ProgresoService progresoService;
 
-
-
-    @PostMapping("/iniciar")
-    public ResponseEntity<?> iniciarRutina(@RequestBody IniciarRutinaRequest request) {
-        try{
+    @PostMapping("/RegistrarProgreso")
+    public ResponseEntity<IniciarRutinaResponse> iniciarRutina(@RequestBody IniciarRutinaRequest request) {
+        IniciarRutinaResponse response = new IniciarRutinaResponse();
 
             List<RutinaRealizada> creadas = progresoService.iniciarRutina(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                    "mensaje", "Rutina iniciada correctamente",
-                    "registros_creados", creadas.size()
-            ));
-        }catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            response.setSuccess(true);
+            response.setMensaje("Rutina iniciada correctamente");
+            response.setRegistrosCreados(creadas.size());
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
-        }
     }
 }
