@@ -24,8 +24,8 @@ public class RealizaRutinaController {
 
     @PatchMapping("/desafio/{idDesafio}")
     public ResponseEntity<String> iniciarRutina(@PathVariable Integer idDesafio) {
-        String mensaje = rutinaRealizadaService.actualizarFechaInicio(idDesafio);
-        return ResponseEntity.ok(mensaje);
+        String message = rutinaRealizadaService.actualizarFechaInicio(idDesafio);
+        return ResponseEntity.ok(message);
     }
 
 }
