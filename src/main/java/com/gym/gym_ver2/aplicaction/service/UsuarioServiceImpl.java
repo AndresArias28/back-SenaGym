@@ -1,10 +1,10 @@
 package com.gym.gym_ver2.aplicaction.service;
 
+import com.gym.gym_ver2.domain.model.requestModels.SerieAvanceRequest;
 import com.gym.gym_ver2.domain.model.entity.Persona;
 
 import com.gym.gym_ver2.domain.model.entity.Rol;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
-import com.gym.gym_ver2.domain.model.pojos.UserResponse;
 import com.gym.gym_ver2.domain.model.dto.UsuarioDTO;
 import com.gym.gym_ver2.infraestructure.persistence.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,6 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional(readOnly = true)
     public List<UsuarioDTO> getUsers() {
-
             // Obtener todos los usuarios desde el repositorio
             List<Usuario> usuarios = usuarioRepository.findAll();
 
@@ -72,7 +71,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Transactional
     @Override
-    public UserResponse actualizarUsuario(UsuarioDTO userRequest) {
+    public SerieAvanceRequest.UserResponse actualizarUsuario(UsuarioDTO userRequest) {
 //        Optional<Usuario> usuario = usuarioRepository.findById(userRequest.getIdPersona().getIdPersona());
 //        if (usuario.isEmpty()) {
 //            return new UserResponse("Usuario no encontrado");
@@ -87,7 +86,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 //                userRequest.getNombreUsuario(),
 //                userRequest.getEmailUsuario()
 //        );
-        return new UserResponse("Usuario actualizado correctamente");
+        return new SerieAvanceRequest.UserResponse("Usuario actualizado correctamente");
     }
 
     @Override

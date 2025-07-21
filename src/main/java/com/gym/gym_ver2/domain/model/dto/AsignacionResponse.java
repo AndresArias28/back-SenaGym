@@ -9,13 +9,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Getter
-public class AsignacionRutinaDTO {
+public class AsignacionResponse {
+    private Integer idAsignacion;
     private Integer idPersona;
     private Integer idRutina;
     private String observaciones;
     private LocalDateTime fechaAsignacion;
     private LocalDateTime fechaFinalizacion;
     private String diasAsignado;
-
 }
-

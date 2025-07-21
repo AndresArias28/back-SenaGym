@@ -4,13 +4,13 @@ import com.gym.gym_ver2.domain.model.dto.*;
 import com.gym.gym_ver2.domain.model.entity.DesafioRealizado;
 import com.gym.gym_ver2.domain.model.entity.RutinaEjercicio;
 import com.gym.gym_ver2.domain.model.entity.RutinaRealizada;
+import com.gym.gym_ver2.domain.model.requestModels.SerieAvanceRequest;
 import com.gym.gym_ver2.infraestructure.exceptions.RecursoNoEncontradoException;
 import com.gym.gym_ver2.infraestructure.persistence.repository.DesafiosRealizadosRepository;
 import com.gym.gym_ver2.infraestructure.persistence.repository.RutinaEjerciciosRepository;
 import com.gym.gym_ver2.infraestructure.persistence.repository.RutinaRealizadaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package com.gym.gym_ver2.infraestructure.controller;
 
 import com.gym.gym_ver2.aplicaction.service.UsuarioService;
-import com.gym.gym_ver2.domain.model.pojos.UserResponse;
+import com.gym.gym_ver2.domain.model.requestModels.SerieAvanceRequest;
 import com.gym.gym_ver2.domain.model.dto.UsuarioDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +46,12 @@ public class UsuarioControler {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @PutMapping("/actualizarUsuario")
-    public ResponseEntity<UserResponse> updateUser(@RequestBody UsuarioDTO userRequest){//metodo para actualizar Usuario
+    public ResponseEntity<SerieAvanceRequest.UserResponse> updateUser(@RequestBody UsuarioDTO userRequest){//metodo para actualizar Usuario
         try{
             if (userRequest == null) {//valida si la peticion es nula
                 return ResponseEntity.badRequest().build();
             }
-            UserResponse res = userService.actualizarUsuario(userRequest); //envia al servicio la peticion
+            SerieAvanceRequest.UserResponse res = userService.actualizarUsuario(userRequest); //envia al servicio la peticion
             return ResponseEntity.ok(res);
         }catch (Exception e) {
             e.printStackTrace();

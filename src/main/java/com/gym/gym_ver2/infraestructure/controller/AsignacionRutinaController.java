@@ -1,6 +1,7 @@
 package com.gym.gym_ver2.infraestructure.controller;
 
 import com.gym.gym_ver2.aplicaction.service.AsignacionRutinaService;
+import com.gym.gym_ver2.domain.model.dto.AsignacionResponse;
 import com.gym.gym_ver2.domain.model.dto.AsignacionRutinaDTO;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +18,8 @@ public class AsignacionRutinaController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/asignar")
-    public ResponseEntity<AsignacionRutinaDTO> asignarRutina(@RequestBody AsignacionRutinaDTO dto) {
-        try {
-            AsignacionRutinaDTO nuevaAsignacion = asignacionRutinaService.asignarRutina(dto);
+    public ResponseEntity<AsignacionResponse> asignarRutina(@RequestBody AsignacionRutinaDTO dto) {
+            AsignacionResponse nuevaAsignacion = asignacionRutinaService.asignarRutina(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaAsignacion);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
     }
 }

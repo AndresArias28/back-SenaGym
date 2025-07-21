@@ -3,7 +3,7 @@ package com.gym.gym_ver2.infraestructure.controller;
 import com.gym.gym_ver2.aplicaction.service.RutinaRealizadaService;
 import com.gym.gym_ver2.domain.model.dto.IniciarRutinaRequest;
 import com.gym.gym_ver2.domain.model.dto.IniciarRutinaResponse;
-import com.gym.gym_ver2.domain.model.dto.SerieAvanceRequest;
+import com.gym.gym_ver2.domain.model.requestModels.SerieAvanceRequest;
 import com.gym.gym_ver2.domain.model.dto.SerieAvanceResponse;
 import com.gym.gym_ver2.domain.model.entity.RutinaRealizada;
 import io.swagger.v3.oas.annotations.tags.Tag;

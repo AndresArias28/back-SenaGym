@@ -24,10 +24,8 @@ public class EjercicioController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/obtenerEjercicios")
     public ResponseEntity<?> obtenerEjercicios() {
-
         List<EjercicioDTO> ejercicios = ejercicioService.obtenerEjercicios();
         return ResponseEntity.ok(ejercicios);
-
     }
 
 
@@ -37,8 +35,6 @@ public class EjercicioController {
             @RequestPart("datos") ExcerciseDTO datos,
             @RequestPart(value = "fotoEjercicio", required = false) MultipartFile fotoEjercicio
     ) {
-//        datos.setFotoEjercicio(fotoEjercicio);
-
         try {
             EjercicioDTO nuevoEjercicio = ejercicioService.crearEjercicio(datos, fotoEjercicio);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevoEjercicio);
