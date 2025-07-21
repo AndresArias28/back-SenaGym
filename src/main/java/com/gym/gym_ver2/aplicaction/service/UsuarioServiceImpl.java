@@ -2,7 +2,6 @@ package com.gym.gym_ver2.aplicaction.service;
 
 import com.gym.gym_ver2.domain.model.requestModels.SerieAvanceRequest;
 import com.gym.gym_ver2.domain.model.entity.Persona;
-
 import com.gym.gym_ver2.domain.model.entity.Rol;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
 import com.gym.gym_ver2.domain.model.dto.UsuarioDTO;

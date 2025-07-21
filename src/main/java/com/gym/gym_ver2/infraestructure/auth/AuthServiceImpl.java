@@ -131,6 +131,9 @@ public class AuthServiceImpl implements  AuthService {
                 .estatura(rq.getEstatura())
                 .peso(rq.getPeso())
                 .nivelFisico(rq.getNivelFisico())
+                .presionSanguinea(rq.getPresionSanguinea())
+                .puntosAcumulados(rq.getPuntosAcumulados())
+                .horasAcumuladas(rq.getHorasAcumuladas())
                 .build();
 
         // Guardar el aprendiz en la base de datos
@@ -145,8 +148,6 @@ public class AuthServiceImpl implements  AuthService {
                 .fotoPerfil(imageUrl)
                 .imagePublicId(imagePublicId)
                 .estado(rq.getEstado())
-//                .puntosAcumulados(0) //  puntos acumulados en 0
-//                .horasAcumuladas(0)
                 .build();
 
         //guardar el usuario en la base de datos

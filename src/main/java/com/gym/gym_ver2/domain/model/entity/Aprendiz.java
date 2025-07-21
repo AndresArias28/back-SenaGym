@@ -44,4 +44,7 @@ public class Aprendiz extends Persona {
     @Column(name = "horas_acumuladas")
     private Integer horasAcumuladas;
 
+    @Column(name = "presion_sanguinea")
+    private Integer presionSanguinea;
+
 }
