@@ -30,14 +30,11 @@ public class DesafiosRealizadosServiceImpl implements  DesafiosRealizadosService
 
     @Override
     public DesafiosUsuarioDAO obtenerDesafioActuaPorUsuario( Integer idUsuario) {
-
          //obtener Usuario logueado
         Usuario user = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
-
         //obtener idPersona
         Integer IdPersona = user.getPersona().getIdPersona();
-
         //obtener aprendiz por idPersona
         Aprendiz aprendiz = aprendizRepository.findById(IdPersona)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Aprendiz no encontrado"));

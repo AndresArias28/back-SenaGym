@@ -24,7 +24,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
@@ -169,7 +168,6 @@ public class AuthServiceImpl implements  AuthService {
         // enviar correo electrónico con el token
         String resetLink = "http://localhost:6090/auth/reset-password?token=" + token;
         sendPasswordResetEmail(usuario.getEmailUsuario(), resetLink);
-
         return "Se ha enviado un correo con instrucciones para restablecer tu contraseña.";
     }
 
