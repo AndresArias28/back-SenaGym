@@ -9,4 +9,6 @@ import org.springframework.stereotype.Service;
 public interface AsignacionRutinaService {
 
     AsignacionResponse asignarRutina(AsignacionRutinaDTO dto);
+
+    AsignacionResponse obtenerRutinaPorPersona(Integer idPersona);
 }

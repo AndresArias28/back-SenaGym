@@ -1,16 +1,24 @@
 package com.gym.gym_ver2.aplicaction.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gym.gym_ver2.domain.model.dto.RutinaCreateDTO;
 import com.gym.gym_ver2.domain.model.dto.RutinaDTO;
+import com.gym.gym_ver2.domain.model.dto.SolicitudRutinaDTO;
 import com.gym.gym_ver2.domain.model.entity.Ejercicio;
 import com.gym.gym_ver2.domain.model.entity.Rutina;
 import com.gym.gym_ver2.domain.model.entity.RutinaEjercicio;
+import com.gym.gym_ver2.infraestructure.config.OpenAiProperties;
+import com.gym.gym_ver2.infraestructure.exceptions.RecursoNoEncontradoException;
 import com.gym.gym_ver2.infraestructure.persistence.repository.EjercicioRepository;
 import com.gym.gym_ver2.infraestructure.persistence.repository.RutinaEjerciciosRepository;
 import com.gym.gym_ver2.infraestructure.persistence.repository.RutinaRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
@@ -25,11 +33,14 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class RutinaServiceImpl implements  RutinaService {
 
+    private final OpenAiProperties openAiProperties;
     private static final Logger logger = LoggerFactory.getLogger(RutinaServiceImpl.class);
     private final RutinaRepository rutinaRepo;
     private final EjercicioRepository ejercicioRepo;
     private final RutinaEjerciciosRepository rutinaEjercicioRepo;
     private final CloudinaryService cloudinaryService;
+    private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
+//    private static final String OPENAI_API_KEY = "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";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -325,6 +336,67 @@ public class RutinaServiceImpl implements  RutinaService {
                 .dificultad(rutina.getDificultad())
                 .ejercicios(ejercicioDTOs)
                 .build();
+    }
+
+    @Override
+    public String generarRutinaConIA(SolicitudRutinaDTO datos) {
+        String prompt=construirPrompt(datos);
+        String apikey = openAiProperties.getApiKey();
+
+        if (apikey == null || apikey.isEmpty()) {
+            throw new RuntimeException("API Key de OpenAI no configurada");
+        }
+        if (prompt.isEmpty()) {
+            throw new RecursoNoEncontradoException("No se pudo construir el prompt para la IA");
+        }
+        try {
+            OkHttpClient client = new OkHttpClient();
+            String bodyJson = "{\n" +
+                    "  \"model\": \"gpt-3.5-turbo\",\n" +
+                    "  \"messages\": [\n" +
+                    "    {\"role\": \"system\", \"content\": \"Eres un experto en entrenamiento físico y nutrición.\"},\n" +
+                    "    {\"role\": \"user\", \"content\": \"" + prompt + "\"}\n" +
+                    "  ],\n" +
+                    "  \"max_tokens\": 1500,\n" +
+                    "  \"temperature\": 0.7\n" +
+                    "}";
+
+            Request request = new Request.Builder()
+                    .url(OPENAI_URL)
+                    .addHeader("Authorization", "Bearer " + apikey)
+                    .post(okhttp3.RequestBody.create(bodyJson, okhttp3.MediaType.parse("application/json")))
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()) {
+                String respuestaJson = response.body().string();
+                // Extrae el texto de la respuesta
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode root = mapper.readTree(respuestaJson);
+                String rutina = root.path("choices").get(0).path("message").path("content").asText();
+                return rutina;
+            }else {
+                String errorBody = response.body().string();
+                logger.error("Código HTTP OpenAI: {}", response.code());
+                logger.error("Cuerpo de error OpenAI: {}", errorBody);
+                return "error al consultar OPenAI: " + errorBody;
+            }
+
+        } catch (Exception e) {
+            logger.error("Error al llamar a la IA: {}", e.getMessage());
+            e.printStackTrace();
+            return "error al consultar OPenAI" + e.getMessage();
+        }
+    }
+
+    private String construirPrompt(SolicitudRutinaDTO datos) {
+        return String.format(
+                "Género: %s, Edad: %d, Altura: %d cm, Peso: %d kg,  Objetivo: %s, Lesiones: %s, Nivel: %s, Frecuencia entrenos a la semana: %s, Lugar de entrenamiento: %s, frecuencia cardiaca: %d " +
+                        "Genera una rutina semanal detallada de ejercicios acorde a estos datos. Incluye calentamiento, ejercicios principales y estiramiento. Especifica series, repeticiones, carga, tiempos de descanso y advertencias si es necesario.",
+                datos.getSexo(), datos.getEdad(), datos.getAltura(), datos.getPeso(),
+                datos.getObjetivo(), datos.getLesiones(), datos.getNivel(),
+                datos.getFrecuencia(), datos.getUbicacion(), datos.getFrecuenciaCardio()
+        );
     }
 
 }

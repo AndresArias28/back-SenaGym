@@ -130,7 +130,7 @@ public class AuthServiceImpl implements  AuthService {
                 .estatura(rq.getEstatura())
                 .peso(rq.getPeso())
                 .nivelFisico(rq.getNivelFisico())
-                .presionSanguinea(rq.getPresionSanguinea())
+                .frecuenciaCardiaca(rq.getPresionSanguinea())
                 .puntosAcumulados(rq.getPuntosAcumulados())
                 .horasAcumuladas(rq.getHorasAcumuladas())
                 .build();

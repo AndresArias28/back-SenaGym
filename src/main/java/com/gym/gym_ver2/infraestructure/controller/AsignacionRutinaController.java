@@ -22,4 +22,13 @@ public class AsignacionRutinaController {
             AsignacionResponse nuevaAsignacion = asignacionRutinaService.asignarRutina(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaAsignacion);
     }
+
+    @GetMapping("/rutina/{idPersona}")
+    public ResponseEntity<AsignacionResponse> obtenerRutinaPorPersona(@PathVariable Integer idPersona) {
+        AsignacionResponse asignacion = asignacionRutinaService.obtenerRutinaPorPersona(idPersona);
+        if (asignacion == null) {
+            throw new EntityNotFoundException("No se encontró una asignación de rutina para el aprendiz con ID: " + idPersona);
+        }
+        return ResponseEntity.ok(asignacion);
+    }
 }

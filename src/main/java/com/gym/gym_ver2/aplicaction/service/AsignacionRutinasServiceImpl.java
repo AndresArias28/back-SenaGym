@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -59,6 +60,24 @@ public class AsignacionRutinasServiceImpl implements  AsignacionRutinaService{
                 .fechaAsignacion(asignacionRutina.getFechaAsignacion())
                 .diasAsignado(asignacionRutina.getDiasAsignado())
                 .fechaFinalizacion(asignacionRutina.getFechaFinalizacion())
+                .build();
+    }
+
+    @Override
+    public AsignacionResponse obtenerRutinaPorPersona(Integer idPersona) {
+        List<AsignacionRutina> asignaciones = asignacionRutinaRepository.findByAprendiz_IdPersona(idPersona);
+
+        if (asignaciones.isEmpty()) {
+            throw new RecursoNoEncontradoException("No se encontraron asignaciones de rutina para el aprendiz con ID: " + idPersona);
+        }
+        return AsignacionResponse.builder()
+                .idAsignacion(asignaciones.get(0).getIdAsignacionRutina())
+                .idPersona(asignaciones.get(0).getAprendiz().getIdPersona())
+                .idRutina(asignaciones.get(0).getRutina().getIdRutina())
+                .observaciones(asignaciones.get(0).getObservaciones())
+                .fechaAsignacion(asignaciones.get(0).getFechaAsignacion())
+                .diasAsignado(asignaciones.get(0).getDiasAsignado())
+                .fechaFinalizacion(asignaciones.get(0).getFechaFinalizacion())
                 .build();
     }
 }
