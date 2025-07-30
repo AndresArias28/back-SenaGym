@@ -9,6 +9,7 @@ import com.gym.gym_ver2.domain.model.entity.Aprendiz;
 import com.gym.gym_ver2.domain.model.entity.Rol;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
 import com.gym.gym_ver2.infraestructure.config.CustomUserDetailsService;
+import com.gym.gym_ver2.infraestructure.exceptions.RecursoNoEncontradoException;
 import com.gym.gym_ver2.infraestructure.jwt.JwtService;
 import com.gym.gym_ver2.infraestructure.persistence.repository.AprendizRepository;
 import com.gym.gym_ver2.infraestructure.persistence.repository.PersonaRepository;
@@ -46,13 +47,13 @@ public class AuthServiceImpl implements  AuthService {
     private  final CustomUserDetailsService customUserDetailsService;
     private final CloudinaryService cloudinaryService;
 
-    public AuthResponse login(LoginRequest rq) {
+    public String login(LoginRequest rq) {
         // Validar que el email y la contraseña no estén vacíos
         if (rq.getEmailUsuario() == null || rq.getEmailUsuario().isEmpty()) {
-            throw new IllegalArgumentException("El email no puede estar vacío");
+            throw new RecursoNoEncontradoException("El email no puede estar vacío");
         }
         if (rq.getContrasenaUsuario() == null || rq.getContrasenaUsuario().isEmpty()) {
-            throw new IllegalArgumentException("La contraseña no puede estar vacía");
+            throw new RecursoNoEncontradoException("La contraseña no puede estar vacía");
         }
         try {//patron Cadena de Responsabilidad
             authenticationManager.authenticate(// autentica que el usuario y la contraseña sean correctos
@@ -78,9 +79,9 @@ public class AuthServiceImpl implements  AuthService {
 
             String token = jwtService.generateToken(tokenExtraClaim, userDetails);// generar el token segun el email del usuario
             System.out.println("Token generado: " + token);
-            return AuthResponse.builder().token(token).build();//crear la respuesta con el token y retornarla
+            return token;
         } catch (Exception e) {
-            throw new RuntimeException("Usuario o contraseña incorrectos");
+            throw new RecursoNoEncontradoException("Usuario o contraseña incorrectos");
         }
     }
 
