@@ -3,7 +3,7 @@ package com.gym.gym_ver2.infraestructure.auth;
 import com.gym.gym_ver2.domain.model.dto.RegisterRequestDTO;
 
 public interface AuthService  {
-    String login(LoginRequest rq);
+    AuthResponse login(LoginRequest rq);
 
     AuthResponse register(RegisterRequestDTO rq);
 
