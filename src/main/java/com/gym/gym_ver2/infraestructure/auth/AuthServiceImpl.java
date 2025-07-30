@@ -9,6 +9,7 @@ import com.gym.gym_ver2.domain.model.entity.Aprendiz;
 import com.gym.gym_ver2.domain.model.entity.Rol;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
 import com.gym.gym_ver2.infraestructure.config.CustomUserDetailsService;
+import com.gym.gym_ver2.infraestructure.exceptions.RecursoNoEncontradoException;
 import com.gym.gym_ver2.infraestructure.jwt.JwtService;
 import com.gym.gym_ver2.infraestructure.persistence.repository.AprendizRepository;
 import com.gym.gym_ver2.infraestructure.persistence.repository.PersonaRepository;
@@ -18,7 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -47,42 +50,76 @@ public class AuthServiceImpl implements  AuthService {
     private final CloudinaryService cloudinaryService;
 
     public AuthResponse login(LoginRequest rq) {
-        // Validar que el email y la contraseña no estén vacíos
+
+        System.out.println("⏩ Iniciando proceso de login...");
+
+        // Validación inicial de campos
         if (rq.getEmailUsuario() == null || rq.getEmailUsuario().isEmpty()) {
-            throw new IllegalArgumentException("El email no puede estar vacío");
+            System.out.println("Email vacío");
+            throw new RecursoNoEncontradoException("El email no puede estar vacío");
         }
         if (rq.getContrasenaUsuario() == null || rq.getContrasenaUsuario().isEmpty()) {
-            throw new IllegalArgumentException("La contraseña no puede estar vacía");
+            System.out.println("Contraseña vacía");
+            throw new RecursoNoEncontradoException("La contraseña no puede estar vacía");
         }
-        try {//patron Cadena de Responsabilidad
-            authenticationManager.authenticate(// autentica que el usuario y la contraseña sean correctos
-                    new UsernamePasswordAuthenticationToken(rq.getEmailUsuario(), rq.getContrasenaUsuario())//este metodo se encarga de validar el usuario y la contraseña si ya existen en la base de datos
+
+        try {
+            System.out.println("🔐 Autenticando usuario: " + rq.getEmailUsuario());
+
+            // Autenticar usuario
+            Authentication auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            rq.getEmailUsuario(),
+                            rq.getContrasenaUsuario()
+                    )
             );
-            //recuperar el usuario de la BD
-            System.out.println("Email del usuario: " + rq.getEmailUsuario());
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(rq.getEmailUsuario());//cargar el usuario de la base de datos
-            System.out.println("detalles del usuario: " + userDetails.getUsername());
+            System.out.println("✅ Usuario autenticado correctamente.");
 
-            HashMap<String, Object> tokenExtraClaim = new HashMap<>(); //crear un objeto de tipo HashMap
-            tokenExtraClaim.put("sub", rq.getEmailUsuario());//agregar el email del usuario al token
-            Optional<Usuario> userByEmail =userRepository.findByEmailUsuario(rq.getEmailUsuario());
+            // Cargar detalles del usuario
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(rq.getEmailUsuario());
+            System.out.println("📄 Detalles del usuario cargados: " + userDetails.getUsername());
 
-            Integer idPersona = userByEmail.map(Usuario::getPersona).map(aprendiz -> aprendiz.getIdPersona()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-            System.out.println("idPersona: " + idPersona);
-            Integer idUSer = userByEmail.map(Usuario::getIdUsuario).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-            String nombreUsuario = userByEmail.map(Usuario::getNombreUsuario).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-            System.out.println("ID del usuario: " + idUSer);
-            tokenExtraClaim.put("id_usuario", idUSer);
-            tokenExtraClaim.put("id_persona", idPersona);
-            tokenExtraClaim.put("nombre_usuario", nombreUsuario);
+            // Buscar usuario completo
+            Optional<Usuario> optionalUsuario = userRepository.findByEmailUsuario(rq.getEmailUsuario());
+            if (optionalUsuario.isEmpty()) {
+                System.out.println(" Usuario no encontrado en la BD.");
+                throw new RuntimeException("Usuario no encontrado");
+            }
 
-            String token = jwtService.generateToken(tokenExtraClaim, userDetails);// generar el token segun el email del usuario
-            System.out.println("Token generado: " + token);
-            return AuthResponse.builder().token(token).build();//crear la respuesta con el token y retornarla
+            Usuario usuario = optionalUsuario.get();
+            System.out.println("Usuario encontrado en BD. ID: " + usuario.getIdUsuario());
+
+            // Preparar claims
+            HashMap<String, Object> tokenExtraClaim = new HashMap<>();
+            tokenExtraClaim.put("sub", usuario.getEmailUsuario());
+            tokenExtraClaim.put("id_usuario", usuario.getIdUsuario());
+            tokenExtraClaim.put("nombre_usuario", usuario.getNombreUsuario());
+
+            if (usuario.getPersona() != null) {
+                Integer idPersona = usuario.getPersona().getIdPersona();
+                tokenExtraClaim.put("id_persona", idPersona);
+                System.out.println("ID Persona: " + idPersona);
+            } else {
+                System.out.println("⚠Usuario no tiene persona asociada.");
+            }
+
+            // Generar token
+            String token = jwtService.generateToken(tokenExtraClaim, userDetails);
+            System.out.println("Token generado correctamente: " + token);
+
+            // Retornar respuesta
+            return AuthResponse.builder().token(token).build();
+
+        } catch (BadCredentialsException e) {
+            System.out.println("Credenciales inválidas: " + e.getMessage());
+            throw new RecursoNoEncontradoException("Usuario o contraseña incorrectos");
         } catch (Exception e) {
-            throw new RuntimeException("Usuario o contraseña incorrectos");
+            System.out.println("Error inesperado durante el login: " + e.getMessage());
+            e.printStackTrace();
+            throw new RecursoNoEncontradoException("Error durante el inicio de sesión");
         }
     }
+
 
     public AuthResponse register(RegisterRequestDTO rq) {
         String imageUrl = null;

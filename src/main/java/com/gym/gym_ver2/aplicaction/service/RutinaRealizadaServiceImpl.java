@@ -1,10 +1,11 @@
 package com.gym.gym_ver2.aplicaction.service;
 
 import com.gym.gym_ver2.domain.model.dto.*;
+import com.gym.gym_ver2.domain.model.requestModels.SerieAvanceRequest;
+import com.gym.gym_ver2.domain.model.dto.SerieAvanceResponse;
 import com.gym.gym_ver2.domain.model.entity.DesafioRealizado;
 import com.gym.gym_ver2.domain.model.entity.RutinaEjercicio;
 import com.gym.gym_ver2.domain.model.entity.RutinaRealizada;
-import com.gym.gym_ver2.domain.model.requestModels.SerieAvanceRequest;
 import com.gym.gym_ver2.infraestructure.exceptions.RecursoNoEncontradoException;
 import com.gym.gym_ver2.infraestructure.persistence.repository.DesafiosRealizadosRepository;
 import com.gym.gym_ver2.infraestructure.persistence.repository.RutinaEjerciciosRepository;
@@ -65,7 +66,6 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
             desafio.setFechaFinDesafio(LocalDateTime.now());
             desafioUsuarioRepository.save(desafio);
         }
-
         return new SerieAvanceResponse(
                 progreso.getSeries(),
                 objetivoSeries,
@@ -73,6 +73,7 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
                 rutinaFinalizada
         );
     }
+
 
     @Override
     public String actualizarFechaInicio(Integer id) {
