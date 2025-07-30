@@ -34,14 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         // Asignar roles al usuario y devolver un objeto UserDetails
         List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(usuario.getIdRol().getNombreRol()));
         usuario.setAuthorities(authorities);
-
-
         System.out.println("Authorities: " + authorities);
-//        return new org.springframework.security.core.userdetails.User(// Devuelve un objeto UserDetails
-//                usuario.getEmailUsuario(),
-//                usuario.getContrasenaUsuario(), // Contraseña encriptada de la base de datos
-//                authorities // Lista de roles del usuario
-//        );
         return  usuario;
     }
 }
