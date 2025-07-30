@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface RutinaRealizadaService {
 
-//    RutinaRealizadaDTO crearRutina(RutinaRealizadaDTO rutinaRealizadaDTO);
-
     SerieAvanceResponse avanzarSerie(SerieAvanceRequest serieAvanceRq);
 
     String actualizarFechaInicio(Integer idRutinaRealizada);
