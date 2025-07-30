@@ -1,26 +1,26 @@
 package com.gym.gym_ver2.aplicaction.service;
 
 import com.gym.gym_ver2.domain.model.dto.AdminDTO;
+import com.gym.gym_ver2.domain.model.dto.CodigoQRRequest;
+import com.gym.gym_ver2.domain.model.entity.Empleado;
 import com.gym.gym_ver2.domain.model.entity.Rol;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
+import com.gym.gym_ver2.infraestructure.exceptions.RecursoNoEncontradoException;
+import com.gym.gym_ver2.infraestructure.persistence.repository.EmployRepository;
 import com.gym.gym_ver2.infraestructure.persistence.repository.RolRepository;
 import com.gym.gym_ver2.infraestructure.persistence.repository.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AdminServiceImpl implements  AdminService {
 
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
-//    private final PasswordEncoder passwordEncoder;
-
-    public AdminServiceImpl(UsuarioRepository usuarioRepository, RolRepository rolRepository) {
-        this.usuarioRepository = usuarioRepository;
-        this.rolRepository = rolRepository;
-    }
+    private final EmployRepository employRepository;
 
     @Override
     @Transactional
@@ -37,24 +37,22 @@ public class AdminServiceImpl implements  AdminService {
                 .toList();
     }
 
-//    @Override
-//    public AuthResponse registerAdmin(RegisterAdminRequest rq, Principal principal) {
-//        System.out.println("Accediendo al metodo protegido.");
-//        Usuario usuarioActual = usuarioRepository.findByEmailUsuario(principal.getName())
-//                .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado"));
-//        System.out.println("Usuario autenticado: " + usuarioActual.getNombreUsuario());
-//        Rol rol = rolRepository.findByNombreRol("Administrador")
-//                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
-//        Usuario usuario = Usuario.builder()
-//                .nombreUsuario(rq.getNombreAdmin())
-//                .apellidoUsuario(rq.getApellidoAdmin())
-//                .emailUsuario(rq.getEmailAdmin())
-//                .cedulaUsuario(rq.getCedulaAdmin())
-//                .contrasenaUsuario(passwordEncoder.encode(rq.getContrasenaAdmin()))
-//                .idRol(Rol.builder().idRol(2).build())
-//                .build();
-//        usuarioRepository.save(usuario);
-//        return AuthResponse.builder().token("Administrador registrado").build();
-//    }
+    @Override
+    public void registerQR(String qr, Integer idAdmin) {
+        System.out.println();
+        Empleado empleado = employRepository.findById(idAdmin)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Empleado no encontrado"));
+        empleado.setCodigoQr(qr);
+        employRepository.save(empleado);
+    }
+
+    @Override
+    public boolean validarQr(String codigoQR) {
+        if (codigoQR == null || codigoQR.isEmpty()) {
+            throw new RecursoNoEncontradoException("El código QR no puede ser nulo o vacío");
+        }
+        System.out.println("codigoQR: " + codigoQR);
+        return employRepository.findByCodigoQr(codigoQR).isPresent();
+    }
 
 }

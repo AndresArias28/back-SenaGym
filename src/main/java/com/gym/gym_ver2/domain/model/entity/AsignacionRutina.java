@@ -1,11 +1,8 @@
 package com.gym.gym_ver2.domain.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
-
 import java.time.LocalDateTime;
 
 @Data
@@ -33,6 +30,9 @@ public class AsignacionRutina {
 
     @Column(name = "fecha_finalizacion")
     private LocalDateTime fechaFinalizacion;
+
+    @Column(name = "dias_asignado")
+    private String diasAsignado;
 
     @Column(name = "observaciones")
     private  String observaciones;

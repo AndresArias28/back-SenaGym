@@ -2,20 +2,22 @@ package com.gym.gym_ver2.infraestructure.controller;
 
 import com.gym.gym_ver2.aplicaction.service.AdminService;
 import com.gym.gym_ver2.domain.model.dto.AdminDTO;
-import com.gym.gym_ver2.domain.model.requestModels.RegisterAdminRequest;
-import com.gym.gym_ver2.infraestructure.auth.AuthResponse;
-import com.gym.gym_ver2.infraestructure.auth.RegisterRequest;
+import com.gym.gym_ver2.domain.model.dto.CodigoQRRequest;
+import com.gym.gym_ver2.domain.model.entity.Empleado;
+import com.gym.gym_ver2.domain.model.entity.Usuario;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Tag(name = "Admin Controller", description = "Endpoints para gestion de admins")
 
@@ -43,25 +45,25 @@ public class AdminController {
         }
     }
 
-//    @PostMapping("/register")
-//    @PreAuthorize("hasAnyAuthority('ROLE_Administrador', 'ROLE_Superusuario')")
-//    public ResponseEntity<AuthResponse> registerAdmin(@RequestBody RegisterAdminRequest rq, Principal principal) {
-//        try{
-//            if (rq == null) {
-//                return ResponseEntity.badRequest().build();
-//            }
-//
-//            if (principal == null) {
-//                throw new RuntimeException("Error: El usuario no está autenticado.");
-//            }
-//            return ResponseEntity.ok(adminService.registerAdmin(rq, principal));
-//        }catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-//
-//    }
+    @PostMapping("/register/qr")
+    public ResponseEntity<Map> registrarQR(@AuthenticationPrincipal Usuario usuario, @RequestBody CodigoQRRequest rq) {
+//        int idAdmin = usuario.getIdUsuario().intValue();
+        int idPersona = usuario.getPersona().getIdPersona().intValue();
+        String codigoQR = rq.getCodigoQR();
+        adminService.registerQR(codigoQR, idPersona);
+        return ResponseEntity.ok((Map.of("mensaje", "QR guardado")));
+    }
 
 
+    @PostMapping("/validarQR")
+    public ResponseEntity<?> validarQR(@RequestBody CodigoQRRequest rq) {
+        boolean esValido = adminService.validarQr(rq.getCodigoQR());
+
+        if (esValido) {
+            return ResponseEntity.ok(Map.of("mensaje", "QR valido"));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("mensaje", "QR invalido"));
+        }
+    }
 
 }

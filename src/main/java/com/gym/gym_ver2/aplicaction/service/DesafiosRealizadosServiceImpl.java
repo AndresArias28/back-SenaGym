@@ -27,17 +27,13 @@ public class DesafiosRealizadosServiceImpl implements  DesafiosRealizadosService
     private final DesafioRepository desafioRepository;
     private final DesafioRealizadoRepository desafioRealizadoRepository;
 
-
     @Override
     public DesafiosUsuarioDAO obtenerDesafioActuaPorUsuario( Integer idUsuario) {
-
          //obtener Usuario logueado
         Usuario user = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
-
         //obtener idPersona
         Integer IdPersona = user.getPersona().getIdPersona();
-
         //obtener aprendiz por idPersona
         Aprendiz aprendiz = aprendizRepository.findById(IdPersona)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Aprendiz no encontrado"));
@@ -89,33 +85,5 @@ public class DesafiosRealizadosServiceImpl implements  DesafiosRealizadosService
         desafiosUsuarioDAO.setPuntosAcumulados(puntos);
         return  desafiosUsuarioDAO;
     }
-
-//    @Override
-//    public DesafioRealizadoResponse crearDesafioRealizado(Integer idAprendiz, Integer idDesafio) {
-//        if (idDesafio == null || idAprendiz == null) {
-//            throw new IllegalArgumentException("ID del desafío o del aprendiz no puede ser null");
-//        }
-//
-//        Desafio desafio = desafioRepository.findById(idDesafio)
-//                .orElseThrow(() -> new RuntimeException("Desafío no encontrado"));
-//
-//        Aprendiz aprendiz = aprendizRepository.findById(idAprendiz)
-//                .orElseThrow(() -> new RuntimeException("Aprendiz no encontrado"));
-//
-//        DesafioRealizado nuevo = DesafioRealizado.builder()
-//
-//                .desafio(desafio)
-//                .aprendiz(aprendiz)
-//                .fechaInicioDesafio(LocalDateTime.now())
-//                .estadoDesafio("En Progreso")
-//                .build();
-//
-//        DesafioRealizado guardado = desafioRealizadoRepository.save(nuevo);
-//
-//        return new DesafioRealizadoResponse(
-//                guardado.getIdDesafioRealizado(),
-//                guardado.getEstadoDesafio()
-//        );
-//    }
 
 }

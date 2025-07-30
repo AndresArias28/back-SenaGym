@@ -14,7 +14,6 @@ import java.util.Date;
 @Table(name = "persona")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Persona {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_persona")

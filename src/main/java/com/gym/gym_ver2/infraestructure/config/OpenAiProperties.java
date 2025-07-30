@@ -1,4 +1,4 @@
-package com.gym.gym_ver2.infraestructure.jwt;
+package com.gym.gym_ver2.infraestructure.config;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,8 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "jwt")
-public class JwtProperties {
-    private String secret;
-    private long expiration;
+@ConfigurationProperties(prefix = "openai")
+public class OpenAiProperties {
+    private String apiKey;
 }

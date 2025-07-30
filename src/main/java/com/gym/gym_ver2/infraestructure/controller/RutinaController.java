@@ -3,6 +3,7 @@ package com.gym.gym_ver2.infraestructure.controller;
 import com.gym.gym_ver2.aplicaction.service.RutinaService;
 import com.gym.gym_ver2.domain.model.dto.RutinaCreateDTO;
 import com.gym.gym_ver2.domain.model.dto.RutinaDTO;
+import com.gym.gym_ver2.domain.model.dto.SolicitudRutinaDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -107,8 +108,10 @@ public class RutinaController {
 
     }
 
-
-
-
+    @PostMapping("/generar")
+    public ResponseEntity<?> generarRutina(@RequestBody SolicitudRutinaDTO datos) {
+        String rutina = rutinaService.generarRutinaConIA(datos);
+        return ResponseEntity.ok(rutina);
+    }
 
 }

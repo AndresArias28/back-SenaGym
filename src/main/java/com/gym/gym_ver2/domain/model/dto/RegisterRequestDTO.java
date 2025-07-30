@@ -33,4 +33,5 @@ public class RegisterRequestDTO {
     Integer horasAcumuladas;
     Integer puntosAcumulados;
     String nivelFisico;
+    Integer presionSanguinea;
 }
