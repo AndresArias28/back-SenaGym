@@ -13,12 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfig {
     private final UsuarioRepository userRepository;
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return email -> userRepository.findByEmailUsuario(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-    }
-
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }

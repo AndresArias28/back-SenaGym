@@ -103,4 +103,6 @@ public class SecurityConfig { //obtener la cadena de filtros
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
 }
