@@ -15,6 +15,8 @@ public class GymVer2Application {
 	public static void main(String[] args) {
 		// Carga .env y lo inyecta en el entorno
 		Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+		//mostrar perfil de local o produccion
+		System.out.println("Active Profile: " + dotenv.get("SPRING_PROFILES_ACTIVE"));
 		dotenv.entries().forEach(entry ->
 				System.setProperty(entry.getKey(), entry.getValue())
 		);
