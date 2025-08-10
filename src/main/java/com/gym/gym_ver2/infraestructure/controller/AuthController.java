@@ -38,11 +38,5 @@ public class AuthController {
         return ResponseEntity.ok(authService.forgotPassword(request.getEmailUsuario()));
     }
 
-//    @PutMapping("/reset-password")
-//    public ResponseEntity<String> resetPassword( @RequestBody Map<String, String> request) {
-//        String token = request.get("token");
-//        String newPassword = request.get("password");
-//        return ResponseEntity.ok(authService.recoverPassword(newPassword, token));
-//    }
 
 }
