@@ -18,31 +18,12 @@ import java.util.Properties;
 public class GymVer2Application {
 
 	public static void main(String[] args) {
-		// 1) Cargar .env (no falla si no existe)
+		// Carga .env y lo inyecta en el entorno
 		Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
-
-		// 2) Activar perfil desde .env (opcional)
-		String profile = dotenv.get("SPRING_PROFILES_ACTIVE");
-		if (profile != null && !profile.isBlank()) {
-			System.setProperty("spring.profiles.active", profile);
-		}
-		System.out.println("Active Profile (.env): " + profile);
-
-		// 3) Inyectar variables de .env SOLO si no existen ya
-		Properties sys = System.getProperties();
-		dotenv.entries().forEach(e -> sys.putIfAbsent(e.getKey(), e.getValue()));
-
-		// 4) Arrancar Spring
+		dotenv.entries().forEach(entry ->
+				System.setProperty(entry.getKey(), entry.getValue())
+		);
 		SpringApplication.run(GymVer2Application.class, args);
-	}
-
-	@Bean
-	ApplicationRunner dbg(Environment env) {
-		return args -> {
-			System.out.println(">> spring.datasource.url = " + env.getProperty("spring.datasource.url"));
-			System.out.println(">> spring.datasource.username = " + env.getProperty("spring.datasource.username"));
-
-		};
 	}
 
 }
