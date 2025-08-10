@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -17,22 +20,21 @@ public class Recompensa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_ruecompensa")
+    @Column(name = "id_recompensa")
     private Long idRecompensa;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario", nullable = false)
-    private Usuario usuario;
+    @ManyToMany(mappedBy = "recompensas")
+    private List<Usuario> usuarios = new ArrayList<>();
 
-    @NotBlank
-    @Column(name = "nombre", nullable = false, length = 120)
-    private String nombre;
-
-    @Column(name = "descripcion", columnDefinition = "TEXT")
-    private String descripcion;
+    @Column(name = "nombre_recompensa", nullable = false)
+    private String nombreRecompensa;
 
     @Column(name = "puntos_necesarios", nullable = false)
     private Integer puntosNecesarios;
 
+    @Column(name = "tipo_recompensa", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TipoRecompensa tipoRecompensa;
 
 }
+

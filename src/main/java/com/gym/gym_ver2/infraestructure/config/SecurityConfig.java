@@ -33,7 +33,7 @@ import java.util.List;
 @EnableMethodSecurity
 @RequiredArgsConstructor//inyectar dependencias
 public class SecurityConfig { //obtener la cadena de filtros
-
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsService userDetailsService;
 
@@ -61,12 +61,19 @@ public class SecurityConfig { //obtener la cadena de filtros
                                     .requestMatchers(HttpMethod.POST).permitAll()
                                     .requestMatchers(HttpMethod.GET).permitAll()
                                     .requestMatchers(HttpMethod.DELETE).permitAll()
+                                    .requestMatchers("/", "/ping", "/oauth2/**", "/login/**").permitAll()
                                     .anyRequest().authenticated()
                             )
+
                     //configurar la sesion para que sea sin estado
                     .sessionManagement(sessionManagement ->
                             sessionManagement
-                            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                            .oauth2Login(oauth2Login -> oauth2Login.loginPage("/oauth2/authorization/google").successHandler(oAuth2SuccessHandler))
+                            .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/me"))
+                            // si ya tienes tu servicio/handler, inyecta aquí:
+                            // .userInfoEndpoint(ui -> ui.userService(googleOAuth2UserService))
+                            // .successHandler(oAuth2LoginSuccessHandler)
                     .authenticationProvider(authenticationProvider())//configurar el proveedor de autenticacion
                     //configurar el filtro de autenticacion JWT antes del filtro estándar de Spring Security.
                     .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

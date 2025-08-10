@@ -77,22 +77,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     System.out.println("Roles del token: " + roles);
                     System.out.println("Autoridades generadas filtro: " + authorities);
 
-//                    // Validar la url de la petición
-//                    if (request.getRequestURI().startsWith("/user/obtenereUsarios")) {
-//                        boolean esAdministrador = authorities.stream()
-//                                .anyMatch(auth -> auth.getAuthority().equals("ROLE_Administrador"));
-//                        boolean esUsuario = authorities.stream()
-//                                .anyMatch(auth -> auth.getAuthority().equals("ROLE_Aprendiz"));
-//                        boolean esSuperusuario = authorities.stream()
-//                                .anyMatch(auth -> auth.getAuthority().equals("ROLE_Superusuario"));
 //
-//                        // Validar que el usuario tenga el rol usuario para denegarle el permiso
-//                        if (esUsuario) {
-//                            System.err.println("Access Denied: Required Superusuario or admin role");
-//                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied: Requiere Administrador or Superusuario role");
-//                            return;
-//                        }
-//                    }
                     System.out.println("userDetails.getUsername(): " + userDetails.getUsername());
                     System.out.println("userDetails.getAuthorities(): " + userDetails.getAuthorities());
 

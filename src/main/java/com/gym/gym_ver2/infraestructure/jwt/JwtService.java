@@ -41,6 +41,7 @@ public class JwtService {
 
         return Jwts.builder()// Construir el token mediante la librería Jwts
                 .setClaims(extraClaims) // Información adicional, correo
+                .setSubject(user.getUsername())
                 .claim("rol", roles) // Agregar los roles del usuario
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis())) // Fecha de emisión

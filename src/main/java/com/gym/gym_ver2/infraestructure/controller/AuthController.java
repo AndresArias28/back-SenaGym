@@ -39,4 +39,17 @@ public class AuthController {
     }
 
 
+    @GetMapping("/me")
+    public Map<String, Object> me(org.springframework.security.oauth2.core.oidc.user.OidcUser principal) {
+            // OidcUser trae claims como sub, email, name, picture, etc.
+            Map<String, Object> info = new java.util.HashMap<>();
+            info.put("name", principal.getFullName());
+            info.put("email", principal.getEmail());
+            info.put("picture", principal.getPicture());
+            info.put("claims", principal.getClaims());
+            return info;
+    }
+
+
+
 }

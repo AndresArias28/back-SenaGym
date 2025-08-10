@@ -19,6 +19,13 @@ public class Ruta {
     @Column(name = "id_ruta")
     private Long idRuta;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario", nullable = false)
+    private Usuario usuario;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ruta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Recorrido> recorridos;
+
     @NotBlank
     @Column(name = "origen", nullable = false, columnDefinition = "TEXT")
     private String origen;
@@ -28,19 +35,20 @@ public class Ruta {
     private String destino;
 
     // Distancia sugerida por el planificador (opcional)
-    @Column(name = "distancia_km", precision = 8, scale = 2)
+    @Column(name = "distancia_km")
     private Double distanciaKm;
 
     // Tiempo estimado sugerido, en minutos (simple)
     @Column(name = "tiempo_estimado_min")
     private Integer tiempoEstimadoMin;
 
-    // Usuario que creó/guardó la ruta (opcional)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario", nullable = false)
-    private Usuario usuario;
+    @Column(name = "trazado_polyline")
+    private String trazadoPolyline;
 
-    //relacion uyno a muchos con recorrido
-    @OneToMany(mappedBy = "ruta", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private java.util.List<Recorrido> recorridos;
+    @Column(name = "medio_transporte")
+    @Enumerated(EnumType.STRING)
+    private Medio medioTransporte;
+
+
+
 }
