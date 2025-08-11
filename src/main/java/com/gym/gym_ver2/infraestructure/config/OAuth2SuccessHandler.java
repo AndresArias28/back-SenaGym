@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import static org.hibernate.engine.config.spi.StandardConverters.asString;
 
 @Component
 public class OAuth2SuccessHandler implements   org.springframework.security.web.authentication.AuthenticationSuccessHandler {
@@ -31,19 +30,13 @@ public class OAuth2SuccessHandler implements   org.springframework.security.web.
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
-                                        HttpServletResponse response, FilterChain chain,
-                                        Authentication authentication) throws IOException, ServletException {
-
-    }
-
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 
-        // 1) Obtener datos del usuario (tolerando OIDC y OAuth2)
+        // 1) obtener datos del usuario
         String email = null;
         String name  = null;
+
         Object principal = authentication.getPrincipal();
         if (principal instanceof OidcUser oidc) {
             email = oidc.getEmail();
@@ -58,8 +51,7 @@ public class OAuth2SuccessHandler implements   org.springframework.security.web.
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No se pudo obtener el email del proveedor OAuth2");
             return;
         }
-        // TODO: upsert en tu BD (usuarios / oauth_cuentas)
-        // userService.upsertFromGoogle(email, name, principal.getSubject(), principal.getPicture());
+
 
         // Construye un UserDetails mínimo para firmar el JWT
         UserDetails usuario = org.springframework.security.core.userdetails.User
@@ -70,12 +62,12 @@ public class OAuth2SuccessHandler implements   org.springframework.security.web.
 
         String token = jwtService.createToken(usuario);
 
-        String next = redirectUrl + "?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
+        String next = redirectUrl + "?token=" + URLEncoder.encode(token, java.nio.charset.StandardCharsets.UTF_8);
+        System.out.println("[OAuth2SuccessHandler] redirigiendo a: " + next);
 
 
         // Opción rápida (para pruebas): redirigir con token en query
-        response.sendRedirect("http://localhost:5173/login/success?token="
-                + URLEncoder.encode(token, StandardCharsets.UTF_8));
+        response.sendRedirect(next);
 
     }
     private static String asString(Object o) {

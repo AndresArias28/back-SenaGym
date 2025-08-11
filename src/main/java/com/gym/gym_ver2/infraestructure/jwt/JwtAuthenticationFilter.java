@@ -50,11 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override// se ejecuta en cada peticion
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String path = request.getServletPath();
-        //obtener token
-//        final String token = getTokenFromRequest(request);
-//        final String userEmail;
 
-// 1) Preflight CORS: dejar pasar siempre
         if (HttpMethod.OPTIONS.matches(request.getMethod())) {
             filterChain.doFilter(request, response);
             return;
