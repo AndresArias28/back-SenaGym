@@ -19,17 +19,19 @@ public class AuthController {
 
     private final AuthService authService;//instancia para acceder a los metodos y a su vez al token
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping(value="/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest rq) {
         return ResponseEntity.ok(authService.login(rq));
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> registerUsers(@RequestBody RegisterRequest rq) {
         return ResponseEntity.ok(authService.register(rq));
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestBody EmailRequestForgotPass request) {
         if(request.getEmailUsuario() == null || request.getEmailUsuario().isEmpty()) {
@@ -38,7 +40,7 @@ public class AuthController {
         return ResponseEntity.ok(authService.forgotPassword(request.getEmailUsuario()));
     }
 
-
+    @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/me")
     public Map<String, Object> me(org.springframework.security.oauth2.core.oidc.user.OidcUser principal) {
             // OidcUser trae claims como sub, email, name, picture, etc.
@@ -49,7 +51,5 @@ public class AuthController {
             info.put("claims", principal.getClaims());
             return info;
     }
-
-
 
 }
