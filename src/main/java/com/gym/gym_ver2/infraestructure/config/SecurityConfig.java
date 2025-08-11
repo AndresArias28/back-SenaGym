@@ -68,6 +68,9 @@ public class SecurityConfig { //obtener la cadena de filtros
                                             "/swagger-ui.html"
                                     ).permitAll()
 
+                                    .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                                    .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+
                                     // Todo lo demás autenticado
                                     .anyRequest().authenticated()
                             )
@@ -103,38 +106,38 @@ public class SecurityConfig { //obtener la cadena de filtros
         }
     }
 
-//    @Bean // configurar cors para permitir peticiones de angular
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurer() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/**")
-//                        .allowedOriginPatterns("*")
-//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-//                        .allowedHeaders("*")
-//                        .allowCredentials(true);
-//            }
-//        };
-//    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration c = new CorsConfiguration();
-        // Ajusta tus orígenes
-        c.setAllowedOrigins(List.of(
-                "http://localhost:3000",      // React local
-                "https://tu-frontend.com"     // producción (si aplica)
-        ));
-        c.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        c.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
-        c.setExposedHeaders(List.of("Authorization")); // si devuelves token en header
-        // Si usas cookies (withCredentials) descomenta:
-        // c.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", c);
-        return source;
+    @Bean // configurar cors para permitir peticiones de angular
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOriginPatterns("*")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
+            }
+        };
     }
+
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration c = new CorsConfiguration();
+//        // Ajusta tus orígenes
+//        c.setAllowedOrigins(List.of(
+//                "http://localhost:3000",      // React local
+//                "https://tu-frontend.com"     // producción (si aplica)
+//        ));
+//        c.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//        c.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
+//        c.setExposedHeaders(List.of("Authorization")); // si devuelves token en header
+//        // Si usas cookies (withCredentials) descomenta:
+//        // c.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", c);
+//        return source;
+//    }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
