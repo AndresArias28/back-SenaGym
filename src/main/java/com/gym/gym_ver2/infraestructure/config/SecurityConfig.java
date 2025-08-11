@@ -2,6 +2,7 @@ package com.gym.gym_ver2.infraestructure.config;
 
 import com.gym.gym_ver2.infraestructure.jwt.JwtAuthenticationFilter;
 import com.gym.gym_ver2.infraestructure.repository.UsuarioRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -23,6 +25,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -41,60 +45,95 @@ public class SecurityConfig { //obtener la cadena de filtros
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 try {
                     return http
-                            .csrf(AbstractHttpConfigurer::disable)//deshabilitar la proteccion csrf, no es necesario con JWT
-                            .cors(cors -> cors.configurationSource(request -> {
-                                CorsConfiguration config = new CorsConfiguration();
-                                config.setAllowedOrigins(List.of("*")); // Ajusta según sea necesario
-                                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                                config.setAllowedHeaders(List.of("*"));
-                                return config;
-                            }))
-                            .authorizeHttpRequests(authRequest -> authRequest//configurar las rutas que necesitan autenticacion
+                            // CSRF off (JWT / APIs)
+                            .csrf(AbstractHttpConfigurer::disable)
+
+                            // CORS (usa el bean de abajo)
+                            .cors(Customizer.withDefaults())
+
+                            // Rutas públicas y protegidas
+                            .authorizeHttpRequests(auth -> auth
+                                    // Preflight
+                                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                                    // Públicas
                                     .requestMatchers(
+                                            "/",
+                                            "/ping",
                                             "/auth/**",
+                                            "/oauth2/**",
+                                            "/login/**",
                                             "/v3/api-docs/**",
                                             "/swagger-ui/**",
                                             "/swagger-ui.html"
                                     ).permitAll()
-                                    .requestMatchers(HttpMethod.PUT).permitAll()
-                                    .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                                    .requestMatchers(HttpMethod.POST).permitAll()
-                                    .requestMatchers(HttpMethod.GET).permitAll()
-                                    .requestMatchers(HttpMethod.DELETE).permitAll()
-                                    .requestMatchers("/", "/ping", "/oauth2/**", "/login/**").permitAll()
+
+                                    // Todo lo demás autenticado
                                     .anyRequest().authenticated()
                             )
 
-                    //configurar la sesion para que sea sin estado
-                    .sessionManagement(sessionManagement ->
-                            sessionManagement
-                            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-                            .oauth2Login(oauth2Login -> oauth2Login.loginPage("/oauth2/authorization/google").successHandler(oAuth2SuccessHandler))
+                            // Manejo de excepciones: 401 JSON controlado
+                            .exceptionHandling(ex -> ex.authenticationEntryPoint((req, res, e) -> {
+                                res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                res.setContentType("application/json");
+                                res.getWriter().write("{\"error\":true,\"mensaje\":\"No autorizado\"}");
+                            }))
+
+                            // Sesión: IF_REQUIRED porque usas oauth2Login para el handshake
+                            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+
+                            // Google OAuth2
+                            .oauth2Login(oauth -> oauth
+                                    .loginPage("/oauth2/authorization/google")
+                                    .successHandler(oAuth2SuccessHandler)
+                            )
+
+                            // Logout
                             .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/me"))
-                            // si ya tienes tu servicio/handler, inyecta aquí:
-                            // .userInfoEndpoint(ui -> ui.userService(googleOAuth2UserService))
-                            // .successHandler(oAuth2LoginSuccessHandler)
-                    .authenticationProvider(authenticationProvider())//configurar el proveedor de autenticacion
-                    //configurar el filtro de autenticacion JWT antes del filtro estándar de Spring Security.
-                    .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                    .build();
+
+                            // Proveedor de autenticación (si lo usas para login con credenciales)
+                            .authenticationProvider(authenticationProvider())
+
+                            // Filtro JWT antes del estándar
+                            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
+                            .build();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Bean // configurar cors para permitir peticiones de angular
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOriginPatterns("*")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
-            }
-        };
+//    @Bean // configurar cors para permitir peticiones de angular
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.addMapping("/**")
+//                        .allowedOriginPatterns("*")
+//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+//                        .allowedHeaders("*")
+//                        .allowCredentials(true);
+//            }
+//        };
+//    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration c = new CorsConfiguration();
+        // Ajusta tus orígenes
+        c.setAllowedOrigins(List.of(
+                "http://localhost:3000",      // React local
+                "https://tu-frontend.com"     // producción (si aplica)
+        ));
+        c.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        c.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
+        c.setExposedHeaders(List.of("Authorization")); // si devuelves token en header
+        // Si usas cookies (withCredentials) descomenta:
+        // c.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", c);
+        return source;
     }
 
     @Bean

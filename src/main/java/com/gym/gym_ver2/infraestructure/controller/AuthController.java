@@ -51,5 +51,4 @@ public class AuthController {
             info.put("claims", principal.getClaims());
             return info;
     }
-
 }
