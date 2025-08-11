@@ -74,7 +74,8 @@ public class OAuth2SuccessHandler implements   org.springframework.security.web.
 
 
         // Opción rápida (para pruebas): redirigir con token en query
-        response.sendRedirect(next);
+        response.sendRedirect("http://localhost:5173/login/success?token="
+                + URLEncoder.encode(token, StandardCharsets.UTF_8));
 
     }
     private static String asString(Object o) {
