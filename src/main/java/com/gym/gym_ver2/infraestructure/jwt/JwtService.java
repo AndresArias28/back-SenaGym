@@ -1,6 +1,8 @@
 package com.gym.gym_ver2.infraestructure.jwt;
 //patrones: singleton, builder, fachada, estrategy, decorador en .signWith(getKey()
 
+import com.gym.gym_ver2.domain.model.entity.Usuario;
+import com.gym.gym_ver2.infraestructure.exceptions.RecursoNoEncontradoException;
 import com.gym.gym_ver2.infraestructure.repository.UsuarioRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -37,7 +39,7 @@ public class JwtService {
     public String generateToken(Map<String, Object> extraClaims, UserDetails user) {
 
         var usuario = usuarioRepository.findByEmailUsuario(user.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
 
         String roles = user.getAuthorities() // Obtén los roles del usuario
                 .stream()//convierte la lista en un stream
@@ -53,8 +55,8 @@ public class JwtService {
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis())) // Fecha de emisión
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // Expira en 24 minutos
-                .signWith(getKey(), SignatureAlgorithm.HS256) // Firma con clave secreta, añade seguridad
-                .compact(); // Generar el token de tipo String
+                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .compact(); // token de tipo String
     }
     
     // Obtener la clave secreta en formato Key
