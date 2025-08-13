@@ -1,7 +1,7 @@
 package com.gym.gym_ver2.infraestructure.config;
 
+import com.gym.gym_ver2.aplicaction.service.UsuarioService;
 import com.gym.gym_ver2.infraestructure.jwt.JwtService;
-import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,13 +20,18 @@ import java.util.Map;
 public class OAuth2SuccessHandler implements   org.springframework.security.web.authentication.AuthenticationSuccessHandler {
 
     private final JwtService jwtService;
+    private final UsuarioService userService;
 
     @Value("${app.oauth2.redirect-url:http://localhost:5173/login/success}")
     private String redirectUrl;
 
-    public OAuth2SuccessHandler(JwtService jwtService) {
+    public OAuth2SuccessHandler(JwtService jwtService, UsuarioService userService) {
         this.jwtService = jwtService;
+        this.userService = userService;
+
     }
+
+
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -52,8 +57,9 @@ public class OAuth2SuccessHandler implements   org.springframework.security.web.
             return;
         }
 
+       userService.upsertFromGoogle(email, name);
 
-        // Construye un UserDetails mínimo para firmar el JWT
+        // 2) Crear un token JWT para el usuario
         UserDetails usuario = org.springframework.security.core.userdetails.User
                 .withUsername(email)
                 .password("N/A")
@@ -65,11 +71,9 @@ public class OAuth2SuccessHandler implements   org.springframework.security.web.
         String next = redirectUrl + "?token=" + URLEncoder.encode(token, java.nio.charset.StandardCharsets.UTF_8);
         System.out.println("[OAuth2SuccessHandler] redirigiendo a: " + next);
 
-
-        // Opción rápida (para pruebas): redirigir con token en query
         response.sendRedirect(next);
-
     }
+
     private static String asString(Object o) {
         return (o == null) ? null : String.valueOf(o);
     }

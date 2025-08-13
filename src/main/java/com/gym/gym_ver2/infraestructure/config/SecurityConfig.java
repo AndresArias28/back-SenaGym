@@ -1,7 +1,6 @@
 package com.gym.gym_ver2.infraestructure.config;
 
 import com.gym.gym_ver2.infraestructure.jwt.JwtAuthenticationFilter;
-import com.gym.gym_ver2.infraestructure.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -11,26 +10,18 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.List;
 
 @Configuration//configurar objetos de spring
 @EnableWebSecurity
@@ -70,8 +61,9 @@ public class SecurityConfig { //obtener la cadena de filtros
 
                                     .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                                     .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                                    .requestMatchers(HttpMethod.POST, "/user/registerPuntos/**").permitAll()
+                                    .requestMatchers(HttpMethod.GET, "/user/ranking").permitAll()
 
-                                    // Todo lo demás autenticado
                                     .anyRequest().authenticated()
                             )
 

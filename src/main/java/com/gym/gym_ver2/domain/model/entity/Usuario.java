@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "usuario", uniqueConstraints = { @UniqueConstraint(columnNames = "email_usuario"),  @UniqueConstraint(columnNames = "contrasena_usuario")})
+@Table(name = "usuario", uniqueConstraints = { @UniqueConstraint(columnNames = "email_usuario")})
 public class Usuario implements UserDetails  {
 
     @Id
@@ -66,7 +66,7 @@ public class Usuario implements UserDetails  {
     private String identificacion;
 
     @Column(name = "puntos")
-    private Integer puntos;
+    private Double puntos;
 
     @Column(name = "metodo_autenticacion")
     private String metodoAutenticacion; // "LOCAL" o "OAUTH2"

@@ -1,17 +1,16 @@
 package com.gym.gym_ver2.aplicaction.service;
 
+import com.gym.gym_ver2.domain.model.dto.PuntosRequest;
+import com.gym.gym_ver2.domain.model.dto.RankingResponse;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
-import com.gym.gym_ver2.domain.model.pojos.UserResponse;
-import com.gym.gym_ver2.domain.model.dto.UsuarioDTO;
+
 import java.util.List;
 
 public interface UsuarioService {
 
-    List<UsuarioDTO> getUsers();
+    Usuario upsertFromGoogle(String email, String name);
 
-    UsuarioDTO getUser(Integer idPersona);
+    String registerPuntos(Integer idUsuario, PuntosRequest puntos);
 
-    UserResponse actualizarUsuario(UsuarioDTO userRequest);
-
-    void updatePassword(String email, String newPassword);
+    List<RankingResponse> getRanking();
 }

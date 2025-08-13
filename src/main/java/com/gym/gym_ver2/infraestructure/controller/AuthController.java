@@ -4,11 +4,17 @@ import com.gym.gym_ver2.domain.model.dto.EmailRequestForgotPass;
 import com.gym.gym_ver2.infraestructure.auth.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Tag(name = "auth  Controller", description = "Endpoints para la autenticación y restablecimiento de contraseñas")
@@ -40,15 +46,5 @@ public class AuthController {
         return ResponseEntity.ok(authService.forgotPassword(request.getEmailUsuario()));
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
-    @GetMapping("/me")
-    public Map<String, Object> me(org.springframework.security.oauth2.core.oidc.user.OidcUser principal) {
-            // OidcUser trae claims como sub, email, name, picture, etc.
-            Map<String, Object> info = new java.util.HashMap<>();
-            info.put("name", principal.getFullName());
-            info.put("email", principal.getEmail());
-            info.put("picture", principal.getPicture());
-            info.put("claims", principal.getClaims());
-            return info;
-    }
+
 }

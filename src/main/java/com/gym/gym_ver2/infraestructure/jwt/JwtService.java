@@ -1,11 +1,13 @@
 package com.gym.gym_ver2.infraestructure.jwt;
 //patrones: singleton, builder, fachada, estrategy, decorador en .signWith(getKey()
 
+import com.gym.gym_ver2.infraestructure.repository.UsuarioRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.util.*;
@@ -17,9 +19,10 @@ import java.util.stream.Collectors;
 public class JwtService {
 
     private final JwtConfig jwtConfig;// Configuración del JWT, contiene la clave secreta
-
-    public JwtService(JwtConfig jwtConfig) {//  recibe la configuración del JWT
+    private final UsuarioRepository usuarioRepository;
+    public JwtService(JwtConfig jwtConfig, UsuarioRepository usuarioRepository) {//  recibe la configuración del JWT
         this.jwtConfig = jwtConfig;
+        this.usuarioRepository = usuarioRepository;
     }
 
     public String getClave() {// obtener la clave secreta del JWT
@@ -33,6 +36,9 @@ public class JwtService {
     // Crear un token con información adicional
     public String generateToken(Map<String, Object> extraClaims, UserDetails user) {
 
+        var usuario = usuarioRepository.findByEmailUsuario(user.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
         String roles = user.getAuthorities() // Obtén los roles del usuario
                 .stream()//convierte la lista en un stream
                 .map(GrantedAuthority::getAuthority)
@@ -43,6 +49,7 @@ public class JwtService {
                 .setClaims(extraClaims) // Información adicional, correo
                 .setSubject(user.getUsername())
                 .claim("rol", roles) // Agregar los roles del usuario
+                .claim("idUsuario", usuario.getIdUsuario())
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis())) // Fecha de emisión
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // Expira en 24 minutos
