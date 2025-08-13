@@ -2,13 +2,11 @@ package com.gym.gym_ver2.infraestructure.auth;
 //patrones utilizados: builder, singleton,  inyeccion de dependencias. fachada, observerr, Cadena de Responsabilidad
 
 import com.gym.gym_ver2.aplicaction.service.PasswordResetService;
-import com.gym.gym_ver2.aplicaction.service.UsuarioService;
-
 import com.gym.gym_ver2.domain.model.entity.Rol;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
 import com.gym.gym_ver2.infraestructure.config.CustomUserDetailsService;
+import com.gym.gym_ver2.infraestructure.exceptions.RecursoNoEncontradoException;
 import com.gym.gym_ver2.infraestructure.jwt.JwtService;
-
 import com.gym.gym_ver2.infraestructure.repository.RolRepository;
 import com.gym.gym_ver2.infraestructure.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,14 +26,11 @@ import java.util.UUID;
 public class AuthServiceImpl implements  AuthService {
 
     private final UsuarioRepository userRepository;
-//    private final AprendizRepository aprendizRepository;
-//    private final PersonaRepository personaRepository;
     private final RolRepository rolRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final PasswordResetService passwordResetService;
-//    private final UsuarioService usuarioService;
     private final JavaMailSender mailSender;
     private final UserDetailsService userDetailsService;
     private  final CustomUserDetailsService customUserDetailsService;
@@ -70,22 +65,21 @@ public class AuthServiceImpl implements  AuthService {
 
         // Validar que el email y la contraseña no estén vacíos
         if (rq.getEmailUsuario() == null || rq.getEmailUsuario().isEmpty()) {
-            throw new IllegalArgumentException("El email no puede estar vacío");
+            throw new RecursoNoEncontradoException("El email no puede estar vacío");
         }
         if (rq.getContrasenaUsuario() == null || rq.getContrasenaUsuario().isEmpty()) {
-            throw new IllegalArgumentException("La contraseña no puede estar vacía");
+            throw new RecursoNoEncontradoException("La contraseña no puede estar vacía");
         }
-        // Verificar si el usuario ya existe
+
         if (userRepository.findByEmailUsuario(rq.getEmailUsuario()).isPresent()) {
             throw new RuntimeException("El usuario ya existe");
         }
 
-        // obtener el rol de aprendiz  desde la base de datos
         Rol rol = rolRepository.findById(2)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Rol no encontrado"));
 
         Usuario usuario = Usuario.builder()// mediante el patron builder se crea un usuario con la informacion del request
-                .idRol(rol)//por defecto se asigna el rol de usuario
+                .idRol(rol)
                 .nombreUsuario(rq.getNombreUsuario())
                 .emailUsuario(rq.getEmailUsuario())
                 .apellidos(rq.getApellidos())
@@ -96,9 +90,14 @@ public class AuthServiceImpl implements  AuthService {
 
         //guardar el usuario en la base de datos
         userRepository.save(usuario);
-        System.out.println("Rol asignado: " + usuario.getIdRol().getNombreRol());
 
-        return AuthResponse.builder().token(jwtService.createToken(usuario)).build();  //crear token con el usuario creado y retornar la respuesta
+        UserDetails  userDetails = org.springframework.security.core.userdetails.User
+                .withUsername(usuario.getEmailUsuario())
+                .password(usuario.getContrasenaUsuario())
+                .authorities(usuario.getIdRol().getNombreRol())
+                .build();
+
+        return AuthResponse.builder().token(jwtService.createToken(userDetails)).build();
     }
 
 

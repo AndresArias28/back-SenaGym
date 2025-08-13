@@ -58,7 +58,7 @@ public class OAuth2SuccessHandler implements   org.springframework.security.web.
         UserDetails usuario = org.springframework.security.core.userdetails.User
                 .withUsername(email)
                 .password("N/A")
-                .authorities("ROLE_USER")
+                .authorities("Usuario")
                 .build();
 
         String token = jwtService.createToken(usuario);
