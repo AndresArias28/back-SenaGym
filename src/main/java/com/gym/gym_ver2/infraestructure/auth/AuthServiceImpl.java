@@ -58,7 +58,7 @@ public class AuthServiceImpl implements  AuthService {
             System.out.println("detalles del usuario: " + userDetails.getUsername());
             HashMap<String, Object> tokenExtraClaim = new HashMap<>(); //crear un objeto de tipo HashMap
             tokenExtraClaim.put("sub", rq.getEmailUsuario());//agregar el email del usuario al token
-            String token = jwtService.generateToken(tokenExtraClaim, userDetails);// generar el token segun el email del usuario
+            String token = jwtService.generateToken(tokenExtraClaim, userDetails);// generagitr el token segun el email del usuario
             System.out.println("Token generado: " + token);
             return AuthResponse.builder().token(token).build();//crear la respuesta con el token y retornarla
         } catch (Exception e) {
