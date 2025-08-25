@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 
 import org.springframework.http.HttpHeaders;
@@ -30,6 +32,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     private final CustomUserDetailsService customUserDetailsService;
+    private static final Set<String> PUBLIC_PREFIXES = Set.of(
+            "/auth/",
+            "/oauth2/",
+            "/login/",
+            "/v3/api-docs/",
+            "/swagger-ui/"
+    );
 
     //constructor
     public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService, CustomUserDetailsService customUserDetailsService) {
@@ -40,9 +49,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override// se ejecuta en cada peticion
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        final String path = request.getServletPath();
         //obtener token
         final String token = getTokenFromRequest(request);
         final String userEmail;
+
+//        if (HttpMethod.OPTIONS.matches(request.getMethod())) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+//        // 2) Rutas públicas: sin validación de JWT
+//        if (isPublicPath(path)) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+
 
         //validar si el token es nulo
         if (token == null) {
@@ -121,6 +142,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return bearerToken.substring(7);//el token se encuentra despues de la palabra Bearer
         }
         return null;
+    }
+
+    private boolean isPublicPath(String path) {
+        if (path == null) return true;
+        if ("/".equals(path) || "/ping".equals(path)) return true;
+        for (String prefix : PUBLIC_PREFIXES) {
+            if (path.startsWith(prefix)) return true;
+        }
+        return false;
     }
 
 }

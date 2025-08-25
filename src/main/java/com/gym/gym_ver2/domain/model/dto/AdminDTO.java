@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Getter
-public class AdminDTO {
+public class    AdminDTO {
     private Integer idAdmin;
     private String nombreAdmin;
     private String emailAdmin;

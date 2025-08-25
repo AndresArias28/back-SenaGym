@@ -5,6 +5,8 @@ import com.gym.gym_ver2.domain.model.dto.AdminDTO;
 import com.gym.gym_ver2.domain.model.dto.CodigoQRRequest;
 import com.gym.gym_ver2.domain.model.entity.Empleado;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
+import com.gym.gym_ver2.domain.model.requestModels.RegisterAdminRequest;
+import com.gym.gym_ver2.infraestructure.auth.AuthResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +32,13 @@ public class AdminController {
     @Autowired
     public AdminController(AdminService adminService) {
         this.adminService = adminService;
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping("/register/")
+    public ResponseEntity<AuthResponse> registerAdmin(@RequestBody RegisterAdminRequest adminRequest) {
+
+            return ResponseEntity.ok(adminService.registerAdmin(adminRequest));
     }
 
     @Operation(hidden = true)
