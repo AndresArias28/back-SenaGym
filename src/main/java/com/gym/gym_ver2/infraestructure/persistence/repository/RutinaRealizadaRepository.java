@@ -12,5 +12,6 @@ import java.util.Optional;
 public interface RutinaRealizadaRepository extends JpaRepository<RutinaRealizada, Integer> {
     Optional<RutinaRealizada> findByDesafioRealizado_IdDesafioRealizadoAndRutinaEjercicio_IdRutinaEjercicio(Integer idDesafio, Integer  idEjercicio);
     List<RutinaRealizada> findAllByDesafioRealizado_IdDesafioRealizado(Integer idDesafio);
+    Optional<RutinaRealizada> findFirstByDesafioRealizado_IdDesafioRealizado(Integer idDesafioRealizado);
 
 }

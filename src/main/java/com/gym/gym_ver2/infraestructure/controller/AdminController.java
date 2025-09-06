@@ -3,9 +3,11 @@ package com.gym.gym_ver2.infraestructure.controller;
 import com.gym.gym_ver2.aplicaction.service.AdminService;
 import com.gym.gym_ver2.domain.model.dto.AdminDTO;
 import com.gym.gym_ver2.domain.model.dto.CodigoQRRequest;
+import com.gym.gym_ver2.domain.model.dto.responseDTO.ValidacionRutinaResponse;
 import com.gym.gym_ver2.domain.model.entity.Empleado;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
 import com.gym.gym_ver2.domain.model.requestModels.RegisterAdminRequest;
+import com.gym.gym_ver2.domain.model.requestModels.ValidacionQrRutinaRequest;
 import com.gym.gym_ver2.infraestructure.auth.AuthResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,25 +56,19 @@ public class AdminController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/register/qr")
     public ResponseEntity<Map> registrarQR(@AuthenticationPrincipal Usuario usuario, @RequestBody CodigoQRRequest rq) {
-//        int idAdmin = usuario.getIdUsuario().intValue();
         int idPersona = usuario.getPersona().getIdPersona().intValue();
         String codigoQR = rq.getCodigoQR();
         adminService.registerQR(codigoQR, idPersona);
         return ResponseEntity.ok((Map.of("mensaje", "QR guardado")));
     }
 
-
     @PostMapping("/validarQR")
-    public ResponseEntity<?> validarQR(@RequestBody CodigoQRRequest rq) {
-        boolean esValido = adminService.validarQr(rq.getCodigoQR());
-
-        if (esValido) {
-            return ResponseEntity.ok(Map.of("mensaje", "QR valido"));
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("mensaje", "QR invalido"));
-        }
+    public ResponseEntity<ValidacionRutinaResponse> validarQR(@RequestBody ValidacionQrRutinaRequest rq) {
+        ValidacionRutinaResponse response = adminService.validarQr(rq.getCodigoQR(), rq.getIdDesafioRealizado());
+        return ResponseEntity.ok(response);
     }
 
 }

@@ -40,6 +40,7 @@ public class DesafioRealizado {
     @Column(name = "estado")
     private String estadoDesafio;
 
-
+    @Column(name = "caloriasTotales")
+    private Double caloriasTotales;
 
 }

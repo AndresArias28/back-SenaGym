@@ -26,8 +26,8 @@ public class RegisterRequestDTO {
     Date fechaNacimiento;
     String sexo;
 
-    BigDecimal estatura;
-    BigDecimal peso;
+    Double estatura;
+    Double peso;
     Integer ficha;
     String jornada;
     Integer horasAcumuladas;

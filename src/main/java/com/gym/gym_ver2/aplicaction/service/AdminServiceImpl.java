@@ -1,22 +1,24 @@
 package com.gym.gym_ver2.aplicaction.service;
 
 import com.gym.gym_ver2.domain.model.dto.AdminDTO;
-import com.gym.gym_ver2.domain.model.dto.CodigoQRRequest;
-import com.gym.gym_ver2.domain.model.entity.Empleado;
-import com.gym.gym_ver2.domain.model.entity.Rol;
-import com.gym.gym_ver2.domain.model.entity.Usuario;
+import com.gym.gym_ver2.domain.model.dto.responseDTO.ValidacionRutinaResponse;
+import com.gym.gym_ver2.domain.model.entity.*;
 import com.gym.gym_ver2.domain.model.requestModels.RegisterAdminRequest;
 import com.gym.gym_ver2.infraestructure.auth.AuthResponse;
 import com.gym.gym_ver2.infraestructure.exceptions.RecursoNoEncontradoException;
 import com.gym.gym_ver2.infraestructure.jwt.JwtService;
-import com.gym.gym_ver2.infraestructure.persistence.repository.EmployRepository;
-import com.gym.gym_ver2.infraestructure.persistence.repository.RolRepository;
-import com.gym.gym_ver2.infraestructure.persistence.repository.UsuarioRepository;
+import com.gym.gym_ver2.infraestructure.persistence.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImpl implements  AdminService {
@@ -24,7 +26,13 @@ public class AdminServiceImpl implements  AdminService {
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
     private final EmployRepository employRepository;
+    private final DesafiosRealizadosRepository desafiosRealizadosRepository;
+    private final AprendizRepository aprendizRepository;
+    private final RutinaRepository rutinaRepository;
+    private final RutinaEjerciciosRepository rutinaEjerciciosRepository;
+    private final RutinaRealizadaRepository rutinaRealizadaRepository;
     private final JwtService jwtService;
+
 
     @Override
     @Transactional
@@ -50,12 +58,95 @@ public class AdminServiceImpl implements  AdminService {
     }
 
     @Override
-    public boolean validarQr(String codigoQR) {
+    @Transactional
+    public ValidacionRutinaResponse validarQr(String codigoQR, Integer idDesafioRealizado) {
         if (codigoQR == null || codigoQR.isEmpty()) {
             throw new RecursoNoEncontradoException("El código QR no puede ser nulo o vacío");
         }
-        System.out.println("codigoQR: " + codigoQR);
-        return employRepository.findByCodigoQr(codigoQR).isPresent();
+
+        boolean existeQR = employRepository.findByCodigoQr(codigoQR).isPresent();
+        if (!existeQR) {
+            throw new RecursoNoEncontradoException("Código QR no válido");
+        }
+
+        DesafioRealizado desafioRealizado = desafiosRealizadosRepository.findById(idDesafioRealizado).orElseThrow(() -> new RecursoNoEncontradoException("Desafío no encontrado"));
+
+        Aprendiz aprendiz = aprendizRepository.findById(desafioRealizado.getAprendiz().getIdPersona()).orElseThrow(() -> new RecursoNoEncontradoException("Aprendiz no encontrado"));
+
+        log.info("Aprendiz encontrado: id={}, nombre={}, doc={}, peso={}",
+                aprendiz.getIdPersona(),
+                aprendiz.getNombres(),
+                aprendiz.getIdentificacion(),
+                aprendiz.getPeso()
+
+        );
+        Double pesoKg = aprendiz.getPeso();
+
+        Rutina rutina = obtenerRutinaDesdeDesafioRealizado(idDesafioRealizado);
+
+        log.info("rutina encontrada: nombre={}, id={}",
+                rutina.getNombre(),
+                rutina.getIdRutina()
+        );
+
+        List<RutinaEjercicio> ejercicios = rutinaEjerciciosRepository.findByRutina(rutina);
+        if (ejercicios == null || ejercicios.isEmpty()) {
+            throw new IllegalStateException("La rutina no tiene ejercicios asignados");
+        }
+
+        double promedioMets = ejercicios.stream()
+                .mapToDouble(ej -> ej.getEjercicio().getMet())
+                .average()
+                .orElseThrow(() -> new IllegalStateException("No se encontraron ejercicios con METS válidos"));
+
+        // 6. Calcular duración total en minutos
+        long duracionTotalSegundos = ejercicios.stream()
+                .mapToLong(ej -> ej.getSeries() * ej.getDuracion()) // duracion en seg por serie
+                .sum();
+
+        double duracionTotalMinutos = duracionTotalSegundos / 60.0;
+
+        // 7. Calcular calorías
+        double calorias = (promedioMets * 3.5 * pesoKg * duracionTotalMinutos) / 200.0;
+
+        String dif = Optional.ofNullable(rutina.getDificultad()).orElse(rutina.getDificultad()).toString();
+
+        log.info("el nivel es: {}", dif);
+
+        int puntosGanados;
+
+        switch (dif) {
+            case "PRINCIPIANTE" -> puntosGanados = 50;
+            case "INTERMEDIO"   -> puntosGanados = 75;
+            case "AVANZADO"     -> puntosGanados = 100;
+            default             -> puntosGanados = 50;
+        }
+
+        int puntosPrevios = Optional.ofNullable(aprendiz.getPuntosAcumulados()).orElse(0);
+        int horasPrevias  = Optional.ofNullable(aprendiz.getHorasAcumuladas()).orElse(0);
+
+        int puntosTotales = puntosPrevios + puntosGanados;
+        int horasActualizadas  = horasPrevias;
+
+        if (puntosTotales >= 300) {
+            horasActualizadas  += 1;
+        }
+
+        desafioRealizado.setCaloriasTotales(calorias);
+        desafioRealizado.setFechaFinDesafio(LocalDateTime.now());
+        desafioRealizado.setEstadoDesafio("completado");
+        desafiosRealizadosRepository.save(desafioRealizado);
+
+        aprendiz.setPuntosAcumulados(puntosTotales);
+        aprendiz.setHorasAcumuladas(horasActualizadas);
+        aprendizRepository.save(aprendiz);
+        return new ValidacionRutinaResponse("Rutina validada con éxito", calorias);
+    }
+
+    public Rutina obtenerRutinaDesdeDesafioRealizado(Integer idDesafioRealizado) {
+        RutinaRealizada rutinaRealizada = rutinaRealizadaRepository.findFirstByDesafioRealizado_IdDesafioRealizado(idDesafioRealizado)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Rutina realizada no encontrada para el desafío"));
+        return rutinaRealizada.getRutinaEjercicio().getRutina();
     }
 
     @Override

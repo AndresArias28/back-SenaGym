@@ -82,7 +82,6 @@ public class RutinaServiceImpl implements  RutinaService {
                 .imagePublicId(imagePublicId)
                 .enfoque(rutinaDTO.getEnfoque())
                 .dificultad(rutinaDTO.getDificultad())
-                .puntuajeRutina(puntaje)
                 .build();
 
         Rutina savedRutina = rutinaRepo.save(rutina);
@@ -102,7 +101,6 @@ public class RutinaServiceImpl implements  RutinaService {
                         .repeticiones(ejDto.getRepeticion())
                         .carga(ejDto.getCarga())
                         .duracion(ejDto.getDuracion())
-                        .calorias(0)
                         .asignacion(false)
                         .build();
             }).collect(Collectors.toList());
@@ -142,7 +140,6 @@ public class RutinaServiceImpl implements  RutinaService {
                     .fotoRutina(savedRutina.getFotoRutina())
                     .enfoque(savedRutina.getEnfoque())
                     .dificultad(savedRutina.getDificultad())
-                    .puntuajeRutina(savedRutina.getPuntuajeRutina())
                     .ejercicios(ejercicioDTOs)
                     .build();
 
@@ -323,6 +320,7 @@ public class RutinaServiceImpl implements  RutinaService {
                     .repeticion(re.getRepeticiones())
                     .series(re.getSeries())
                     .duracion(re.getDuracion())
+                    .met(ej.getMet())
                     .carga(re.getCarga())
                     .build();
         }).collect(Collectors.toList());

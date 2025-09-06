@@ -35,7 +35,7 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
                 )
                 .orElseThrow(() -> new RecursoNoEncontradoException("Progreso no encontrado"));
 
-        int nuevasSeries = progreso.getSeries() +1;
+        int nuevasSeries = progreso.getSeries() + 1;
         // Incrementar serie
         progreso.setSeries(nuevasSeries);
         int repeticionesEsperadas = progreso.getRutinaEjercicio().getRepeticiones();
@@ -73,7 +73,6 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
                 rutinaFinalizada
         );
     }
-
 
     @Override
     public String actualizarFechaInicio(Integer id) {

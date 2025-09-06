@@ -30,7 +30,6 @@ public class RutinaController {
             @RequestPart("fotoRutina") MultipartFile fotoRutina
     ) {
         datos.setFotoRutina(fotoRutina);
-
         try {
             RutinaDTO nuevaRutina = rutinaService.crearRutina(datos);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaRutina);
@@ -105,7 +104,6 @@ public class RutinaController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
     }
 
     @PostMapping("/generar")

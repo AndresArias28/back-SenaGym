@@ -34,7 +34,6 @@ public class RutinaCreateDTO {
         private Integer repeticion;
         private Integer carga;
         private Integer duracion;
-        private Integer calorias;
         private Integer orden;
         private Integer tiempoDescanso;
         private Boolean asignacion;

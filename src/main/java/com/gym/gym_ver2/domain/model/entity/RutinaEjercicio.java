@@ -28,7 +28,6 @@ public class RutinaEjercicio {
     @OneToMany(mappedBy = "rutinaEjercicio", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<RutinaRealizada> rutinasRealizadas;
 
-
     @Column(name = "repeticiones")
     private Integer repeticiones;
 
@@ -40,9 +39,6 @@ public class RutinaEjercicio {
 
     @Column(name = "carga")
     private Integer carga;
-
-    @Column(name = "calorias")
-    private Integer calorias;
 
     @Column(name = "orden")
     private Integer orden;

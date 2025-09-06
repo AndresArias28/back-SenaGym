@@ -50,30 +50,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override// se ejecuta en cada peticion
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String path = request.getServletPath();
-        //obtener token
-        final String token = getTokenFromRequest(request);
-        final String userEmail;
 
-//        if (HttpMethod.OPTIONS.matches(request.getMethod())) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
-//        // 2) Rutas públicas: sin validación de JWT
-//        if (isPublicPath(path)) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
-
-
-        //validar si el token es nulo
-        if (token == null) {
-            System.out.println("Token no encontrado en la solicitud");
+        if (HttpMethod.OPTIONS.matches(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        // 2) Rutas públicas: sin validación de JWT
+        if (isPublicPath(path)) {
             filterChain.doFilter(request, response);
             return;
         }
 
+        // 3) Leer token del header Authorization
+        final String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        final String token = authHeader.substring(7);
+        if (token == null || token.isBlank()) {
+            writeUnauthorized(response, "Token vacío");
+            return;
+        }
+
         try {
-            userEmail = jwtService.extractUsername(token); //extraer el correo del token
+            final String userEmail = jwtService.extractUsername(token); //extraer el correo del token
             System.out.println("Correo del token desde el filtro: " + userEmail);
             //validar token y correo
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -92,28 +94,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     // Obtener los roles del token
                     String roles = claims.get("rol", String.class);
-
                     // Convertir roles en una lista de autoridades
                     List<GrantedAuthority> authorities = (roles != null) ? Collections.singletonList(new SimpleGrantedAuthority(roles)) : List.of();
                     System.out.println("Roles del token: " + roles);
                     System.out.println("Autoridades generadas filtro: " + authorities);
 
-                    // Validar la url de la petición
-                    if (request.getRequestURI().startsWith("/user/obtenereUsarios")) {
-                        boolean esAdministrador = authorities.stream()
-                                .anyMatch(auth -> auth.getAuthority().equals("ROLE_Administrador"));
-                        boolean esUsuario = authorities.stream()
-                                .anyMatch(auth -> auth.getAuthority().equals("ROLE_Aprendiz"));
-                        boolean esSuperusuario = authorities.stream()
-                                .anyMatch(auth -> auth.getAuthority().equals("ROLE_Superusuario"));
-
-                        // Validar que el usuario tenga el rol usuario para denegarle el permiso
-                        if (esUsuario) {
-                            System.err.println("Access Denied: Required Superusuario or admin role");
-                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied: Requiere Administrador or Superusuario role");
-                            return;
-                        }
-                    }
                     System.out.println("userDetails.getUsername(): " + userDetails.getUsername());
                     System.out.println("userDetails.getAuthorities(): " + userDetails.getAuthorities());
 
@@ -122,6 +107,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             userDetails, null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                     System.out.println("Autenticación establecida en el SecurityContextHolder");
+                }else {
+                    writeUnauthorized(response, "Token no válido");
+                    return;
                 }
             }
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
@@ -142,6 +130,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return bearerToken.substring(7);//el token se encuentra despues de la palabra Bearer
         }
         return null;
+    }
+
+    private void writeUnauthorized(HttpServletResponse response, String message) throws IOException {
+        if (!response.isCommitted()) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\":true,\"mensaje\":\"" + message + "\"}");
+        }
     }
 
     private boolean isPublicPath(String path) {

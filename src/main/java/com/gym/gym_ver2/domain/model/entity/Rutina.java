@@ -33,9 +33,6 @@ public class Rutina {
     @Column(name = "foto_rutina")
     private String fotoRutina;
 
-    @Column(name = "puntuaje_rutina")
-    private Integer puntuajeRutina;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "dificultad")
     private Dificultad dificultad;
@@ -43,9 +40,6 @@ public class Rutina {
     @Enumerated(EnumType.STRING)
     @Column(name = "enfoque")
     private Enfoque enfoque;
-
-    @Column(name = "calorias_totales")
-    private Integer caloriasTotales;
 
     @Column(name = "image_public_id")
     private String imagePublicId;

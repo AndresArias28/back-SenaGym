@@ -30,10 +30,10 @@ public class Aprendiz extends Persona {
     private String jornada;
 
     @Column(name = "estatura")
-    private BigDecimal estatura;
+    private Double estatura;
 
     @Column(name = "peso")
-    private BigDecimal peso;
+    private Double peso;
 
     @Column(name = "nivel_fisico")
     private String nivelFisico;

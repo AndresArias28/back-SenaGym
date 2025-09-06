@@ -30,4 +30,6 @@ public class Desafio {
     private java.util.List<DesafioRealizado> desafiosUsuarios;
 
 
+
+
 }
