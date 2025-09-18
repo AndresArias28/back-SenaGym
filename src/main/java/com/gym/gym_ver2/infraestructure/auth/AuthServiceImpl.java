@@ -188,7 +188,7 @@ public class AuthServiceImpl implements  AuthService {
         userRepository.save(usuario);
         System.out.println("Rol asignado: " + usuario.getIdRol().getNombreRol());
 
-        return AuthResponse.builder().token(jwtService.createToken(usuario)).build();
+        return AuthResponse.builder().token(jwtService.createToken(usuario)).url_foto(imageUrl).build();
     }
 
     public Usuario getUsuarioActual(String email) {
