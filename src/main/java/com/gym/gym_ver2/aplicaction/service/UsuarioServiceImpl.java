@@ -1,10 +1,12 @@
 package com.gym.gym_ver2.aplicaction.service;
 
+import com.gym.gym_ver2.domain.model.dto.responseDTO.DashResponse;
+import com.gym.gym_ver2.domain.model.entity.*;
 import com.gym.gym_ver2.domain.model.requestModels.SerieAvanceRequest;
-import com.gym.gym_ver2.domain.model.entity.Persona;
-import com.gym.gym_ver2.domain.model.entity.Rol;
-import com.gym.gym_ver2.domain.model.entity.Usuario;
 import com.gym.gym_ver2.domain.model.dto.UsuarioDTO;
+import com.gym.gym_ver2.infraestructure.exceptions.RecursoNoEncontradoException;
+import com.gym.gym_ver2.infraestructure.persistence.repository.AprendizRepository;
+import com.gym.gym_ver2.infraestructure.persistence.repository.DesafioRealizadoRepository;
 import com.gym.gym_ver2.infraestructure.persistence.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,11 +20,15 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AprendizRepository aprendizRepository;
+    private final DesafioRealizadoRepository desafioRealizadoRepository;
 
     @Autowired
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, AprendizRepository aprendizRepository, DesafioRealizadoRepository desafioRealizadoRepository) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
+        this.aprendizRepository = aprendizRepository;
+        this.desafioRealizadoRepository = desafioRealizadoRepository;
     }
 
 //    @PreAuthorize("hasAnyAuthority('ROLE_Administrador', 'ROLE_Superusuario')")
@@ -98,4 +104,34 @@ public class UsuarioServiceImpl implements UsuarioService {
         user.setContrasenaUsuario(passwordEncoder.encode(newPassword));
         usuarioRepository.save(user);
     }
+
+//    @Override
+//    @Transactional(readOnly = true)
+//    public DashResponse getUserDashboardData(int idUsuario) {
+//
+//        Usuario usuario = usuarioRepository.
+//                findById(idUsuario).orElseThrow(() -> new RecursoNoEncontradoException("recurso no encontrado"));
+//
+//        Persona persona = usuario.getPersona();
+//        if(persona == null) {
+//            throw new RecursoNoEncontradoException("Persona no encontrada para el usuario con ID: " + idUsuario);
+//        }
+//
+//        int idAprendiz = persona.getIdPersona();
+//
+//        Aprendiz aprendiz  = aprendizRepository.findById(idAprendiz)
+//                .orElseThrow(() -> new RecursoNoEncontradoException("Aprendiz no encontrado para la persona con ID: " + idAprendiz));
+//
+//        int numeroFicha = aprendiz.getFicha();
+//        if (numeroFicha == 0) {
+//            throw new RecursoNoEncontradoException("Número de ficha no encontrado para el aprendiz con ID: " + idAprendiz);
+//        }
+//
+//        // Buscar el DesafioRealizado más reciente o activo
+//        Optional<DesafioRealizado> desafioActualOpt = desafioRealizadoRepository
+//                .findTopByAprendiz_IdPersonaOrderByFechaInicioDesc(aprendiz.getIdPersona());
+//
+//
+//        return new DashResponse();
+//    }
 }

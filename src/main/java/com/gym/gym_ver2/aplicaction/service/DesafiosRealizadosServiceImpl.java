@@ -29,18 +29,18 @@ public class DesafiosRealizadosServiceImpl implements  DesafiosRealizadosService
 
     @Override
     public DesafiosUsuarioDAO obtenerDesafioActuaPorUsuario( Integer idUsuario) {
-         //obtener Usuario logueado
+
         Usuario user = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
-        //obtener idPersona
+
         Integer IdPersona = user.getPersona().getIdPersona();
-        //obtener aprendiz por idPersona
+
         Aprendiz aprendiz = aprendizRepository.findById(IdPersona)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Aprendiz no encontrado"));
 
         List<DesafioRealizado> desafiosRealizados  =  aprendiz.getDesafiosRealizados();
 
-        // 4. Buscar si hay uno en progreso
+        // buscar si hay uno en progreso
         Optional<DesafioRealizado> enProgreso = desafiosRealizados.stream()
                 .filter(d -> "En progreso".equalsIgnoreCase(d.getEstadoDesafio()))
                 .findFirst();
@@ -61,7 +61,7 @@ public class DesafiosRealizadosServiceImpl implements  DesafiosRealizadosService
             desafioRealizado.setAprendiz(aprendiz);
             desafioRealizado.getDesafio().setNumeroDesafio(numeroSiguiente);
             desafioRealizado.setEstadoDesafio("En progreso");
-            desafioRealizado.setFechaInicioDesafio(desafioRealizado.getFechaInicioDesafio());
+            desafioRealizado.setFechaInicioDesafio(LocalDateTime.now());
             desafioRealizado.setFechaFinDesafio(null);
             desafioRealizado = desafioRealizadoRepository.save(desafioRealizado);
         }

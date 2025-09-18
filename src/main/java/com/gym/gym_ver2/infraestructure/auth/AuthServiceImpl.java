@@ -141,7 +141,6 @@ public class AuthServiceImpl implements  AuthService {
             imagePublicId = "default";
         }
 
-        // Validar que el email y la contraseña no estén vacíos
         if (rq.getEmailUsuario() == null || rq.getEmailUsuario().isEmpty()) {
             throw new IllegalArgumentException("El email no puede estar vacío");
         }
@@ -168,11 +167,10 @@ public class AuthServiceImpl implements  AuthService {
                 .peso(rq.getPeso())
                 .nivelFisico(rq.getNivelFisico())
                 .frecuenciaCardiaca(rq.getPresionSanguinea())
-                .puntosAcumulados(rq.getPuntosAcumulados())
-                .horasAcumuladas(rq.getHorasAcumuladas())
+                .puntosAcumulados(0)
+                .horasAcumuladas(0)
                 .build();
 
-        // Guardar el aprendiz en la base de datos
         aprendiz = aprendizRepository.save(aprendiz);
 
         Usuario usuario = Usuario.builder()// mediante el patron builder se crea un usuario con la informacion del request
@@ -183,14 +181,14 @@ public class AuthServiceImpl implements  AuthService {
                 .contrasenaUsuario(passwordEncoder.encode(rq.getContrasenaUsuario()))//codificar la contraseña
                 .fotoPerfil(imageUrl)
                 .imagePublicId(imagePublicId)
-                .estado(rq.getEstado())
+                .estado("Activo")
                 .build();
 
         //guardar el usuario en la base de datos
         userRepository.save(usuario);
         System.out.println("Rol asignado: " + usuario.getIdRol().getNombreRol());
 
-        return AuthResponse.builder().token(jwtService.createToken(usuario)).build();  //crear token con el usuario creado y retornar la respuesta
+        return AuthResponse.builder().token(jwtService.createToken(usuario)).build();
     }
 
     public Usuario getUsuarioActual(String email) {

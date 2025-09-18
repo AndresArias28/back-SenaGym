@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -23,7 +24,7 @@ public class RegisterRequestDTO {
     String nombres;
     String telefono;
     String identificacion;
-    Date fechaNacimiento;
+    LocalDateTime fechaNacimiento;
     String sexo;
 
     Double estatura;

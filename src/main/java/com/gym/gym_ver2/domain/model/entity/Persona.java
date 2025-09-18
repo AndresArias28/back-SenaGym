@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -29,7 +30,7 @@ public abstract class Persona {
     private String apellidos;
 
     @Column(name="fecha_nacimiento")
-    private Date fechaNacimiento;
+    private LocalDateTime fechaNacimiento;
 
     @Column(name = "telefono")
     private String telefono;
