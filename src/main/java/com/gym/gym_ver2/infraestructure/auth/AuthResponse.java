@@ -12,5 +12,4 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AuthResponse {
     private String token;
-    private String url_foto;
 }

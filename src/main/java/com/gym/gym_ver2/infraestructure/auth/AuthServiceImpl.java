@@ -53,18 +53,17 @@ public class AuthServiceImpl implements  AuthService {
 
         System.out.println("⏩ Iniciando proceso de login...");
 
-        // Validación inicial de campos
         if (rq.getEmailUsuario() == null || rq.getEmailUsuario().isEmpty()) {
-            System.out.println("Email vacío");
+
             throw new RecursoNoEncontradoException("El email no puede estar vacío");
         }
         if (rq.getContrasenaUsuario() == null || rq.getContrasenaUsuario().isEmpty()) {
-            System.out.println("Contraseña vacía");
+
             throw new RecursoNoEncontradoException("La contraseña no puede estar vacía");
         }
 
         try {
-            System.out.println("🔐 Autenticando usuario: " + rq.getEmailUsuario());
+            System.out.println("Autenticando usuario: " + rq.getEmailUsuario());
 
             // Autenticar usuario
             Authentication auth = authenticationManager.authenticate(
@@ -77,10 +76,10 @@ public class AuthServiceImpl implements  AuthService {
 
             // Cargar detalles del usuario
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(rq.getEmailUsuario());
-            System.out.println("📄 Detalles del usuario cargados: " + userDetails.getUsername());
 
             // Buscar usuario completo
             Optional<Usuario> optionalUsuario = userRepository.findByEmailUsuario(rq.getEmailUsuario());
+
             if (optionalUsuario.isEmpty()) {
                 System.out.println(" Usuario no encontrado en la BD.");
                 throw new RuntimeException("Usuario no encontrado");
@@ -89,21 +88,19 @@ public class AuthServiceImpl implements  AuthService {
             Usuario usuario = optionalUsuario.get();
             System.out.println("Usuario encontrado en BD. ID: " + usuario.getIdUsuario());
 
-            // Preparar claims
             HashMap<String, Object> tokenExtraClaim = new HashMap<>();
             tokenExtraClaim.put("sub", usuario.getEmailUsuario());
             tokenExtraClaim.put("id_usuario", usuario.getIdUsuario());
             tokenExtraClaim.put("nombre_usuario", usuario.getNombreUsuario());
+            tokenExtraClaim.put("foto", usuario.getFotoPerfil());
 
             if (usuario.getPersona() != null) {
                 Integer idPersona = usuario.getPersona().getIdPersona();
                 tokenExtraClaim.put("id_persona", idPersona);
-                System.out.println("ID Persona: " + idPersona);
             } else {
-                System.out.println("⚠Usuario no tiene persona asociada.");
+                System.out.println("Usuario no tiene persona asociada.");
             }
 
-            // Generar token
             String token = jwtService.generateToken(tokenExtraClaim, userDetails);
             System.out.println("Token generado correctamente: " + token);
 
@@ -184,16 +181,14 @@ public class AuthServiceImpl implements  AuthService {
                 .estado("Activo")
                 .build();
 
-        //guardar el usuario en la base de datos
         userRepository.save(usuario);
-        System.out.println("Rol asignado: " + usuario.getIdRol().getNombreRol());
 
-        return AuthResponse.builder().token(jwtService.createToken(usuario)).url_foto(imageUrl).build();
+        return AuthResponse.builder().token(jwtService.createToken(usuario)).build();
     }
 
-    public Usuario getUsuarioActual(String email) {
-        return userRepository.findByEmailUsuario(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-    }
+//    public Usuario getUsuarioActual(String email) {
+//        return userRepository.findByEmailUsuario(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+//    }
 
     public String forgotPassword(String email) {
         System.out.println("Email del usuario: " + email);// buscar al usuario por email
