@@ -40,7 +40,6 @@ public class DesafiosRealizadosServiceImpl implements  DesafiosRealizadosService
 
         List<DesafioRealizado> desafiosRealizados  =  aprendiz.getDesafiosRealizados();
 
-        // buscar si hay uno en progreso
         Optional<DesafioRealizado> enProgreso = desafiosRealizados.stream()
                 .filter(d -> "En progreso".equalsIgnoreCase(d.getEstadoDesafio()))
                 .findFirst();

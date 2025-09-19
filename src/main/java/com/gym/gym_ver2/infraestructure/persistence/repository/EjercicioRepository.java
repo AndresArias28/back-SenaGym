@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EjercicioRepository extends JpaRepository<Ejercicio, Integer> {
-    // Aquí puedes agregar métodos personalizados si es necesario
-    // Por ejemplo, para buscar ejercicios por nombre o tipo
+
 }
