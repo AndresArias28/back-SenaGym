@@ -35,24 +35,22 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional(readOnly = true)
     public List<UsuarioDTO> getUsers() {
-            // Obtener todos los usuarios desde el repositorio
+
             List<Usuario> usuarios = usuarioRepository.findAll();
 
             return usuarios.stream().map(usr -> {
 
                 Persona persona = usr.getPersona();
                 Rol rol = usr.getIdRol();
-
-                // Validaciones
                 String nombres = (persona != null) ? persona.getNombres() : null;
                 String apellidos = (persona != null) ? persona.getApellidos() : null;
                 Integer idRol = (rol != null) ? rol.getIdRol() : null;
                 return new UsuarioDTO(
                                 persona.getIdPersona(),
                                 nombres,
-                                apellidos,
                                 usr.getNombreUsuario(),
                                 usr.getEmailUsuario(),
+                                persona.getIdentificacion(),
                                 idRol
                 );
             }).toList();
