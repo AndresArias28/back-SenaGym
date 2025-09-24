@@ -7,4 +7,5 @@ public class IniciarRutinaResponse {
     private boolean success;
     private String mensaje;
     private int registrosCreados;
+    private RutinaRealizadaDTO rutinaRealizada;
 }

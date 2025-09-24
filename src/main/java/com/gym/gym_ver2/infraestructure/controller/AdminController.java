@@ -37,7 +37,7 @@ public class AdminController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
-    @PostMapping("/register/")
+    @PostMapping("/register")
     public ResponseEntity<AuthResponse> registerAdmin(@RequestBody RegisterAdminRequest adminRequest) {
 
             return ResponseEntity.ok(adminService.registerAdmin(adminRequest));

@@ -10,6 +10,7 @@ import com.gym.gym_ver2.infraestructure.jwt.JwtService;
 import com.gym.gym_ver2.infraestructure.persistence.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,7 @@ public class AdminServiceImpl implements  AdminService {
     private final RutinaEjerciciosRepository rutinaEjerciciosRepository;
     private final RutinaRealizadaRepository rutinaRealizadaRepository;
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -64,6 +66,7 @@ public class AdminServiceImpl implements  AdminService {
             throw new RecursoNoEncontradoException("El código QR no puede ser nulo o vacío");
         }
 
+
         boolean existeQR = employRepository.findByCodigoQr(codigoQR).isPresent();
         if (!existeQR) {
             throw new RecursoNoEncontradoException("Código QR no válido");
@@ -80,6 +83,7 @@ public class AdminServiceImpl implements  AdminService {
                 aprendiz.getPeso()
 
         );
+
         Double pesoKg = aprendiz.getPeso();
 
         Rutina rutina = obtenerRutinaDesdeDesafioRealizado(idDesafioRealizado);
@@ -165,7 +169,7 @@ public class AdminServiceImpl implements  AdminService {
                 .idRol(rol)
                 .nombreUsuario(adminRequest.getNombreAdmin())
                 .emailUsuario(adminRequest.getEmailAdmin())
-                .contrasenaUsuario(adminRequest.getContrasenaAdmin())
+                .contrasenaUsuario(passwordEncoder.encode(adminRequest.getContrasenaAdmin()))
                 .build();
         usuarioRepository.save(savedUser);
         System.out.println("Admin registrado: " + savedUser.getNombreUsuario() + ", ID: " + admin.getIdPersona());

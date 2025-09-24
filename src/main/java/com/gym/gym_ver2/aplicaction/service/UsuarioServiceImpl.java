@@ -50,9 +50,9 @@ public class UsuarioServiceImpl implements UsuarioService {
                 return new UsuarioDTO(
                                 persona.getIdPersona(),
                                 nombres,
-                                apellidos,
                                 usr.getNombreUsuario(),
                                 usr.getEmailUsuario(),
+                                persona.getIdentificacion(),
                                 idRol
                 );
             }).toList();
