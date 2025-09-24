@@ -41,8 +41,9 @@ public class RealizaRutinaController {
         response.setSuccess(true);
         response.setMensaje("Rutina iniciada correctamente");
         response.setRegistrosCreados(creadas.size());
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 }

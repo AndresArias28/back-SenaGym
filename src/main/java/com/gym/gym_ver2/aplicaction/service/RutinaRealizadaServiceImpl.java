@@ -36,7 +36,6 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Progreso no encontrado"));
 
         int nuevasSeries = progreso.getSeries() + 1;
-        // Incrementar serie
         progreso.setSeries(nuevasSeries);
         int repeticionesEsperadas = progreso.getRutinaEjercicio().getRepeticiones();
         int repeticionesActuales = progreso.getRepeticiones();
@@ -99,7 +98,6 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
             boolean yaExiste = rutinaRealizadaRepository
                     .findByDesafioRealizado_IdDesafioRealizadoAndRutinaEjercicio_IdRutinaEjercicio(request.getIdDesafioRealizado(), ejercicio.getIdRutinaEjercicio())
                     .isPresent();
-
             if (!yaExiste) {
                 RutinaRealizada nueva = new RutinaRealizada();
                 nueva.setDesafioRealizado(desafio);
@@ -107,7 +105,6 @@ public class RutinaRealizadaServiceImpl implements  RutinaRealizadaService {
                 nueva.setSeries(0);
                 nueva.setRepeticiones(0);
                 nueva.setEstado("En Progreso");
-
                 registrosCreados.add(rutinaRealizadaRepository.save(nueva));
             }
         }

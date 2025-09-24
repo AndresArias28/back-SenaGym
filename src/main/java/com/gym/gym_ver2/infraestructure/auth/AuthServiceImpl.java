@@ -72,7 +72,7 @@ public class AuthServiceImpl implements  AuthService {
                             rq.getContrasenaUsuario()
                     )
             );
-            System.out.println("✅ Usuario autenticado correctamente.");
+            System.out.println("Usuario autenticado correctamente.");
 
             // Cargar detalles del usuario
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(rq.getEmailUsuario());
