@@ -81,7 +81,6 @@ public class AdminServiceImpl implements  AdminService {
                 aprendiz.getNombres(),
                 aprendiz.getIdentificacion(),
                 aprendiz.getPeso()
-
         );
 
         Double pesoKg = aprendiz.getPeso();
@@ -138,7 +137,7 @@ public class AdminServiceImpl implements  AdminService {
 
         desafioRealizado.setCaloriasTotales(calorias);
         desafioRealizado.setFechaFinDesafio(LocalDateTime.now());
-        desafioRealizado.setEstadoDesafio("completado");
+        desafioRealizado.setEstadoDesafio("Finalizado");
         desafiosRealizadosRepository.save(desafioRealizado);
 
         aprendiz.setPuntosAcumulados(puntosTotales);

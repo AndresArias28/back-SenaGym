@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Getter
-public class DesafioRealizadoResponse {
+public class DesafioDeUsuario {
     private Integer idDesafioRealizado;
     private String estado;
 }
