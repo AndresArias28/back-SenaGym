@@ -1,7 +1,8 @@
 package com.gym.gym_ver2.aplicaction.service;
 
-import com.gym.gym_ver2.domain.model.dto.DesafioRealizadoResponse;
+import com.gym.gym_ver2.domain.model.dto.DesafioDeUsuario;
 import com.gym.gym_ver2.domain.model.dto.DesafiosUsuarioDAO;
+import com.gym.gym_ver2.domain.model.dto.responseDTO.DesafiosDeUsuarios;
 import com.gym.gym_ver2.domain.model.entity.Aprendiz;
 import com.gym.gym_ver2.domain.model.entity.Desafio;
 import com.gym.gym_ver2.domain.model.entity.DesafioRealizado;
@@ -52,6 +53,7 @@ public class DesafiosRealizadosServiceImpl implements  DesafiosRealizadosService
             // Todos finalizados, se debe iniciar uno nuevo
             int numeroSiguiente = desafiosRealizados.size() + 1;
 
+
             Desafio desafio = desafioRepository.findByNumeroDesafio(numeroSiguiente)
                     .orElseThrow(() -> new RecursoNoEncontradoException("Desafio no encontrado para el número: " + numeroSiguiente));
 
@@ -84,5 +86,30 @@ public class DesafiosRealizadosServiceImpl implements  DesafiosRealizadosService
         desafiosUsuarioDAO.setPuntosAcumulados(puntos);
         return  desafiosUsuarioDAO;
     }
+
+    @Override
+    public List<DesafiosDeUsuarios> obtenerDesafiosPorUsuario(Integer idUsuario) {
+        Usuario user = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
+
+        Integer idPersona = user.getPersona().getIdPersona();
+        Aprendiz aprendiz = aprendizRepository.findById(idPersona)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Aprendiz no encontrado"));
+
+        List<DesafioRealizado> desafiosRealizados  =  aprendiz.getDesafiosRealizados();
+
+        List<DesafiosDeUsuarios> desafioResponses = desafiosRealizados.stream().map(desafio -> {
+            DesafiosDeUsuarios response = new DesafiosDeUsuarios();
+            response.setIdDesafioRealizado(desafio.getIdDesafioRealizado());
+            response.setEstado(desafio.getEstadoDesafio());
+            response.setIdDesafio(desafio.getDesafio().getIdDesafio());
+            return response;
+
+        }).toList();
+
+        return desafioResponses;
+    }
+
+
 
 }
