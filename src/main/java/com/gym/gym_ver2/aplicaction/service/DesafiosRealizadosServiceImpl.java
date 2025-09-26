@@ -1,6 +1,7 @@
 package com.gym.gym_ver2.aplicaction.service;
 
 import com.gym.gym_ver2.domain.model.dto.DesafioDeUsuario;
+import com.gym.gym_ver2.domain.model.dto.DesafioRealizadoDao;
 import com.gym.gym_ver2.domain.model.dto.DesafiosUsuarioDAO;
 import com.gym.gym_ver2.domain.model.dto.responseDTO.DesafiosDeUsuarios;
 import com.gym.gym_ver2.domain.model.entity.Aprendiz;
@@ -110,6 +111,13 @@ public class DesafiosRealizadosServiceImpl implements  DesafiosRealizadosService
         return desafioResponses;
     }
 
+    @Override
+    public List<DesafioRealizadoDao> listDesafiosRealizadosByUsuarioId(Integer idUsuario) {
+        Usuario user = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
+        Integer idPersona = user.getPersona().getIdPersona();
+        return desafioRealizadoRepository.findAllByIdPersona(idPersona);
+    }
 
 
 }
