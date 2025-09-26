@@ -6,12 +6,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class DashResponse {
-    private String nombre;
-    private String apelldido;
-    private String email;
-    private String fotoPerfil;
-    private Integer totalRutinasCompletadas;
-    private Integer totalDesafiosCompletados;
-    private Integer totalCaloriasQuemadas;
-    private Integer numeroFicha;
+    private String horasAcumuladas;
 }

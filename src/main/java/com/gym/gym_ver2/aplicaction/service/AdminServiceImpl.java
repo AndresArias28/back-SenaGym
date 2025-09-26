@@ -135,6 +135,7 @@ public class AdminServiceImpl implements  AdminService {
             horasActualizadas  += 1;
         }
 
+        desafioRealizado.setPuntosObtenidos(puntosGanados);
         desafioRealizado.setCaloriasTotales(calorias);
         desafioRealizado.setFechaFinDesafio(LocalDateTime.now());
         desafioRealizado.setEstadoDesafio("Finalizado");

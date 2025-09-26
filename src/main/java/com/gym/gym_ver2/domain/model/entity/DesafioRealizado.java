@@ -43,4 +43,7 @@ public class DesafioRealizado {
     @Column(name = "caloriasTotales")
     private Double caloriasTotales;
 
+    @Column(name = "puntaje" )
+    private Integer puntosObtenidos;
+
 }
