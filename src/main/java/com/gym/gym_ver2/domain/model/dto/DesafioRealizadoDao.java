@@ -17,4 +17,5 @@ public class DesafioRealizadoDao {
     private LocalDateTime fechaInicioDesafio;
     private LocalDateTime fechaFinDesafio;
     private Double caloriasTotales;
+    private Integer puntosObtenidos;
 }
