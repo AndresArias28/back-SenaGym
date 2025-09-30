@@ -3,11 +3,14 @@ package com.gym.gym_ver2.infraestructure.controller;
 import com.gym.gym_ver2.aplicaction.service.AsignacionRutinaService;
 import com.gym.gym_ver2.domain.model.dto.AsignacionResponse;
 import com.gym.gym_ver2.domain.model.dto.AsignacionRutinaDTO;
+import com.gym.gym_ver2.domain.model.dto.AsignacionesResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/asignaciones")
@@ -30,5 +33,12 @@ public class AsignacionRutinaController {
             throw new EntityNotFoundException("No se encontró una asignación de rutina para el aprendiz con ID: " + idPersona);
         }
         return ResponseEntity.ok(asignacion);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/obttenerAll")
+    public ResponseEntity<List<AsignacionesResponse>> obtenerAllRutinas() {
+        List<AsignacionesResponse> asignaciones = asignacionRutinaService.obtenerAllAsignaciones();
+        return ResponseEntity.ok(asignaciones);
     }
 }
