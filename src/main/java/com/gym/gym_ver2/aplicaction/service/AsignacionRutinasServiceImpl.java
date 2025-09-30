@@ -2,6 +2,7 @@ package com.gym.gym_ver2.aplicaction.service;
 
 import com.gym.gym_ver2.domain.model.dto.AsignacionResponse;
 import com.gym.gym_ver2.domain.model.dto.AsignacionRutinaDTO;
+import com.gym.gym_ver2.domain.model.dto.AsignacionesResponse;
 import com.gym.gym_ver2.domain.model.entity.Aprendiz;
 import com.gym.gym_ver2.domain.model.entity.AsignacionRutina;
 import com.gym.gym_ver2.domain.model.entity.Rutina;
@@ -76,5 +77,10 @@ public class AsignacionRutinasServiceImpl implements  AsignacionRutinaService{
                 .diasAsignado(asignaciones.get(0).getDiasAsignado())
                 .fechaFinalizacion(asignaciones.get(0).getFechaFinalizacion())
                 .build();
+    }
+
+    @Override
+    public List<AsignacionesResponse> obtenerAllAsignaciones() {
+        return asignacionRutinaRepository.listarAsignacionesConAprendiz();
     }
 }
