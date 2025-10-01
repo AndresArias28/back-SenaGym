@@ -1,13 +1,16 @@
 package com.gym.gym_ver2.infraestructure.controller;
 
 import com.gym.gym_ver2.aplicaction.service.RutinaService;
+import com.gym.gym_ver2.domain.model.dto.RutinaAprendizDTO;
 import com.gym.gym_ver2.domain.model.dto.RutinaCreateDTO;
 import com.gym.gym_ver2.domain.model.dto.RutinaDTO;
 import com.gym.gym_ver2.domain.model.dto.SolicitudRutinaDTO;
+import com.gym.gym_ver2.domain.model.entity.Usuario;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -110,6 +113,13 @@ public class RutinaController {
     public ResponseEntity<?> generarRutina(@RequestBody SolicitudRutinaDTO datos) {
         String rutina = rutinaService.generarRutinaConIA(datos);
         return ResponseEntity.ok(rutina);
+    }
+
+    @GetMapping("/porAprendiz")
+    public ResponseEntity<List<RutinaAprendizDTO>> getRutinaByAprendiz(@AuthenticationPrincipal Usuario usuario) {
+    int idUsuario = usuario.getIdUsuario();
+        List<RutinaAprendizDTO> rutinas = rutinaService.getRutinaByAprendiz(idUsuario);
+        return ResponseEntity.ok(rutinas);
     }
 
 }

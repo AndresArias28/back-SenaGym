@@ -13,7 +13,8 @@ public interface AsignacionRutinaRepository extends JpaRepository<AsignacionRuti
     List<AsignacionRutina> findByAprendiz_IdPersona(Integer idPersona);
 
     @Query("SELECT new com.gym.gym_ver2.domain.model.dto.AsignacionesResponse(" +
-            "CONCAT(a.nombres, ' ', a.apellidos), a.ficha, ar.fechaAsignacion, a.nivelFisico) " +
+            "CONCAT(a.nombres, ' ', a.apellidos), a.ficha," +
+            " ar.fechaAsignacion, a.nivelFisico, ar.observaciones, ar.diasAsignado, ar.rutina.nombre) " +
             "FROM AsignacionRutina ar " +
             "JOIN ar.aprendiz a " +
             "ORDER BY ar.fechaAsignacion DESC")

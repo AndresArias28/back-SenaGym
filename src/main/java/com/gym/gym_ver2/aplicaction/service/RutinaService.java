@@ -1,5 +1,6 @@
 package com.gym.gym_ver2.aplicaction.service;
 
+import com.gym.gym_ver2.domain.model.dto.RutinaAprendizDTO;
 import com.gym.gym_ver2.domain.model.dto.RutinaCreateDTO;
 import com.gym.gym_ver2.domain.model.dto.RutinaDTO;
 import com.gym.gym_ver2.domain.model.dto.SolicitudRutinaDTO;
@@ -21,4 +22,6 @@ public interface RutinaService {
     RutinaDTO obtenerRutinaPorId(Integer id);
 
     String generarRutinaConIA(SolicitudRutinaDTO datos);
+
+    List<RutinaAprendizDTO> getRutinaByAprendiz(int idUsuario);
 }

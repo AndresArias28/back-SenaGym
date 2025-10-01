@@ -13,5 +13,8 @@ public class AsignacionesResponse {
     private String nombreAprendiz;
     private Integer ficha;
     private LocalDateTime fechaCreacion;
-    private  String nivelFisico;
+    private String nivelFisico;
+    private String obsevaciones;
+    private String diasAsignado;
+    private String nombreRutina;
 }
