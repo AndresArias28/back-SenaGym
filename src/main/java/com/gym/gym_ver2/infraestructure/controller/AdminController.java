@@ -59,7 +59,7 @@ public class AdminController {
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/register/qr")
     public ResponseEntity<Map> registrarQR(@AuthenticationPrincipal Usuario usuario, @RequestBody CodigoQRRequest rq) {
-        int idPersona = usuario.getPersona().getIdPersona().intValue();
+        int idPersona = usuario.getPersona().getIdPersona();
         String codigoQR = rq.getCodigoQR();
         adminService.registerQR(codigoQR, idPersona);
         return ResponseEntity.ok((Map.of("mensaje", "QR guardado")));

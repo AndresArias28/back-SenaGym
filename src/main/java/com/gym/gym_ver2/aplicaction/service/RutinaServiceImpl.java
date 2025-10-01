@@ -2,17 +2,14 @@ package com.gym.gym_ver2.aplicaction.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gym.gym_ver2.domain.model.dto.RutinaAprendizDTO;
 import com.gym.gym_ver2.domain.model.dto.RutinaCreateDTO;
 import com.gym.gym_ver2.domain.model.dto.RutinaDTO;
 import com.gym.gym_ver2.domain.model.dto.SolicitudRutinaDTO;
-import com.gym.gym_ver2.domain.model.entity.Ejercicio;
-import com.gym.gym_ver2.domain.model.entity.Rutina;
-import com.gym.gym_ver2.domain.model.entity.RutinaEjercicio;
+import com.gym.gym_ver2.domain.model.entity.*;
 import com.gym.gym_ver2.infraestructure.config.OpenAiProperties;
 import com.gym.gym_ver2.infraestructure.exceptions.RecursoNoEncontradoException;
-import com.gym.gym_ver2.infraestructure.persistence.repository.EjercicioRepository;
-import com.gym.gym_ver2.infraestructure.persistence.repository.RutinaEjerciciosRepository;
-import com.gym.gym_ver2.infraestructure.persistence.repository.RutinaRepository;
+import com.gym.gym_ver2.infraestructure.persistence.repository.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +37,8 @@ public class RutinaServiceImpl implements  RutinaService {
     private final RutinaEjerciciosRepository rutinaEjercicioRepo;
     private final CloudinaryService cloudinaryService;
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
-//    private static final String OPENAI_API_KEY = "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";
+    private final UsuarioRepository usuarioRepository;
+    private final AprendizRepository aprendizRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -385,6 +383,21 @@ public class RutinaServiceImpl implements  RutinaService {
             e.printStackTrace();
             return "error al consultar OPenAI" + e.getMessage();
         }
+    }
+
+    @Override
+    public List<RutinaAprendizDTO> getRutinaByAprendiz(int idUsuario) {
+
+        Usuario user = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
+
+        Integer idPersona = user.getPersona().getIdPersona();
+        Aprendiz aprendiz = aprendizRepository.findById(idPersona)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Aprendiz no encontrado"));
+
+        Integer idAprendiz = aprendiz.getIdPersona();
+
+        return rutinaRepo.obtenerRutinasPorAprendiz(idAprendiz);
     }
 
     private String construirPrompt(SolicitudRutinaDTO datos) {
