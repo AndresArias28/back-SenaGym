@@ -3,8 +3,9 @@ package com.gym.gym_ver2.infraestructure.controller;
 import com.gym.gym_ver2.aplicaction.service.AdminService;
 import com.gym.gym_ver2.domain.model.dto.AdminDTO;
 import com.gym.gym_ver2.domain.model.dto.CodigoQRRequest;
+import com.gym.gym_ver2.domain.model.dto.FrecuenciaCardiacaRequest;
 import com.gym.gym_ver2.domain.model.dto.responseDTO.ValidacionRutinaResponse;
-import com.gym.gym_ver2.domain.model.entity.Empleado;
+import com.gym.gym_ver2.domain.model.entity.Aprendiz;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
 import com.gym.gym_ver2.domain.model.requestModels.RegisterAdminRequest;
 import com.gym.gym_ver2.domain.model.requestModels.ValidacionQrRutinaRequest;
@@ -17,14 +18,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 
-
-import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Tag(name = "Admin Controller", description = "Endpoints para gestion de admins")
-
 @RequestMapping("/admin")
 @RestController
 public class AdminController {
@@ -39,7 +37,6 @@ public class AdminController {
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> registerAdmin(@RequestBody RegisterAdminRequest adminRequest) {
-
             return ResponseEntity.ok(adminService.registerAdmin(adminRequest));
     }
 
@@ -70,5 +67,25 @@ public class AdminController {
         ValidacionRutinaResponse response = adminService.validarQr(rq.getCodigoQR(), rq.getIdDesafioRealizado());
         return ResponseEntity.ok(response);
     }
+
+    @PatchMapping("/guardarFrecuenciaAprendiz")
+    public ResponseEntity<Map<String, Object>> guardarFrecuenciaCardiaca(@AuthenticationPrincipal Usuario usuario, @RequestBody FrecuenciaCardiacaRequest rq) {
+        int idPersona = usuario.getPersona().getIdPersona();
+        int frecuencia = rq.getFrecuenciaCardiaca();
+
+        Aprendiz actualizado = adminService.guardarFrecuenciaCardiaca(idPersona, frecuencia);
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("message", "Frecuencia cardiaca actualizada correctamente");
+        response.put("data", Map.of(
+                "idPersona", actualizado.getIdPersona(),
+                "frecuenciaCardiaca", actualizado.getFrecuenciaCardiaca()
+        ));
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    
 
 }

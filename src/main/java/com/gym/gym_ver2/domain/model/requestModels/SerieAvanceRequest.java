@@ -17,5 +17,5 @@ public class SerieAvanceRequest {
     public static class UserResponse {
         String message;
     }
-    //todo: sacar esta clase de aqui
+
 }

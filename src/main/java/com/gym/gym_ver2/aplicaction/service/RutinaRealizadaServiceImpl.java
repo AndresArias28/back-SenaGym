@@ -12,7 +12,6 @@ import com.gym.gym_ver2.infraestructure.persistence.repository.RutinaEjerciciosR
 import com.gym.gym_ver2.infraestructure.persistence.repository.RutinaRealizadaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
