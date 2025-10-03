@@ -4,8 +4,6 @@ import com.gym.gym_ver2.domain.model.dto.RutinaAprendizDTO;
 import com.gym.gym_ver2.domain.model.dto.RutinaCreateDTO;
 import com.gym.gym_ver2.domain.model.dto.RutinaDTO;
 import com.gym.gym_ver2.domain.model.dto.SolicitudRutinaDTO;
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.util.List;
 

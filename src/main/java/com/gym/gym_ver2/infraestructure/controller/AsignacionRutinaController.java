@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -26,13 +25,10 @@ public class AsignacionRutinaController {
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaAsignacion);
     }
 
-    @GetMapping("/rutina/{idPersona}")
-    public ResponseEntity<AsignacionResponse> obtenerRutinaPorPersona(@PathVariable Integer idPersona) {
-        AsignacionResponse asignacion = asignacionRutinaService.obtenerRutinaPorPersona(idPersona);
-        if (asignacion == null) {
-            throw new EntityNotFoundException("No se encontró una asignación de rutina para el aprendiz con ID: " + idPersona);
-        }
-        return ResponseEntity.ok(asignacion);
+    @GetMapping("/rutina/{idPersona}")//todo: arreglar esta parte a listas
+    public ResponseEntity<List<AsignacionResponse>> obtenerRutinaPorPersona(@PathVariable Integer idPersona) {
+        List<AsignacionResponse> asignaciones = asignacionRutinaService.obtenerRutinaPorPersona(idPersona);
+        return ResponseEntity.ok(asignaciones);
     }
 
     @CrossOrigin(origins = "http://localhost:4200")

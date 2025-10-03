@@ -52,8 +52,15 @@ public class DesafiosRealizadosServiceImpl implements  DesafiosRealizadosService
             desafioRealizado = enProgreso.get();
         } else {
             // Todos finalizados, se debe iniciar uno nuevo
-            int numeroSiguiente = desafiosRealizados.size() + 1;
+            int numeroSiguiente = (desafiosRealizados.size() % 8) + 1;
 
+            // Si acaba de completar 8, otorgar bonificación
+            if (desafiosRealizados.size() % 8 == 0) {
+                int bono = 500;
+                Integer puntosActuales = aprendiz.getPuntosAcumulados() != null ? aprendiz.getPuntosAcumulados() : 0;
+                aprendiz.setPuntosAcumulados(puntosActuales + bono);
+                aprendizRepository.save(aprendiz);
+            }
 
             Desafio desafio = desafioRepository.findByNumeroDesafio(numeroSiguiente)
                     .orElseThrow(() -> new RecursoNoEncontradoException("Desafio no encontrado para el número: " + numeroSiguiente));

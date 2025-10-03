@@ -1,6 +1,7 @@
 package com.gym.gym_ver2.aplicaction.service;
 
 import com.gym.gym_ver2.domain.model.dto.AdminDTO;
+import com.gym.gym_ver2.domain.model.dto.FrecuenciaCardiacaRequest;
 import com.gym.gym_ver2.domain.model.dto.responseDTO.ValidacionRutinaResponse;
 import com.gym.gym_ver2.domain.model.entity.*;
 import com.gym.gym_ver2.domain.model.requestModels.RegisterAdminRequest;
@@ -13,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -174,6 +173,14 @@ public class AdminServiceImpl implements  AdminService {
         usuarioRepository.save(savedUser);
         System.out.println("Admin registrado: " + savedUser.getNombreUsuario() + ", ID: " + admin.getIdPersona());
         return AuthResponse.builder().token(jwtService.createToken(savedUser)).build();
+    }
+
+    @Override
+    public Aprendiz guardarFrecuenciaCardiaca(Integer idPersona, Integer frecuencia) {
+        Aprendiz aprendiz = aprendizRepository.findById(idPersona)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Aprendiz no encontrado"));
+        aprendiz.setFrecuenciaCardiaca(frecuencia);
+        return  aprendizRepository.save(aprendiz);
     }
 
 }
