@@ -1,6 +1,7 @@
 package com.gym.gym_ver2.aplicaction.service;
 
 import com.gym.gym_ver2.domain.model.dto.AdminDTO;
+import com.gym.gym_ver2.domain.model.dto.AprendizRanking;
 import com.gym.gym_ver2.domain.model.dto.FrecuenciaCardiacaRequest;
 import com.gym.gym_ver2.domain.model.dto.responseDTO.ValidacionRutinaResponse;
 import com.gym.gym_ver2.domain.model.entity.*;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -181,6 +183,18 @@ public class AdminServiceImpl implements  AdminService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Aprendiz no encontrado"));
         aprendiz.setFrecuenciaCardiaca(frecuencia);
         return  aprendizRepository.save(aprendiz);
+    }
+
+    @Override
+    public List<AprendizRanking> obtenerTop20Aprendices() {
+        return aprendizRepository.findTop20ByOrderByPuntosAcumuladosDesc().stream().map(a -> new AprendizRanking(
+                a.getIdPersona(),
+                a.getNombres(),
+                a.getApellidos(),
+                a.getPuntosAcumulados(),
+                a.getHorasAcumuladas()
+        )).toList();
+
     }
 
 }
