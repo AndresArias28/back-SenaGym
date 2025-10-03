@@ -2,6 +2,7 @@ package com.gym.gym_ver2.infraestructure.controller;
 
 import com.gym.gym_ver2.aplicaction.service.AdminService;
 import com.gym.gym_ver2.domain.model.dto.AdminDTO;
+import com.gym.gym_ver2.domain.model.dto.AprendizRanking;
 import com.gym.gym_ver2.domain.model.dto.CodigoQRRequest;
 import com.gym.gym_ver2.domain.model.dto.FrecuenciaCardiacaRequest;
 import com.gym.gym_ver2.domain.model.dto.responseDTO.ValidacionRutinaResponse;
@@ -85,6 +86,19 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/listaAprendicesTop10")
+    public ResponseEntity<Map<String, Object>> obtenerTop10Aprendices() {
+
+        List<AprendizRanking> top20 = adminService.obtenerTop20Aprendices();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("message", "Top 20 aprendices por puntaje acumulado");
+        response.put("data", top20);
+
+        return ResponseEntity.ok(response);
+
+    }
 
     
 
