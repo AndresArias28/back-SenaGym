@@ -31,7 +31,7 @@ public class AsignacionRutina {
     @Column(name = "fecha_finalizacion")
     private LocalDateTime fechaFinalizacion;
 
-    @Column(name = "dia_asignado")
+    @Column(name = "dias_asignado")
     private String diaAsignado;
 
     @Column(name = "observaciones")

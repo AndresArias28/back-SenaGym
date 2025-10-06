@@ -111,11 +111,6 @@ public class RutinaServiceImpl implements  RutinaService {
             // 3. Mapear los ejercicios al DTO interno
             List<RutinaDTO.RutinaEjercicioDTO> ejercicioDTOs = rutinaEjercicios.stream().map(re -> {
                 Ejercicio ej = re.getEjercicio();
-               // double met = ej.getMet() != null ? ej.getMet() : 0.0; // manejo de MET, si es nulo se asigna 1
-                // calcular calorías basadas en MET, series, repeticiones y duración
-//                double duracionSegundos = re.getDuracion() != null ? re.getDuracion() : 0;
-//                double duracionHoras = duracionSegundos / 3600.0; // convertir a horas
-//                int calorias = (int) Math.round(met * re.getSeries() * re.getRepeticiones() * duracionHoras);
 
                 return RutinaDTO.RutinaEjercicioDTO.builder()
                         .idEjercicio(ej.getIdEjercicio())
