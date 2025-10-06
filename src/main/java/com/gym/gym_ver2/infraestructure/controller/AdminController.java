@@ -1,10 +1,7 @@
 package com.gym.gym_ver2.infraestructure.controller;
 
 import com.gym.gym_ver2.aplicaction.service.AdminService;
-import com.gym.gym_ver2.domain.model.dto.AdminDTO;
-import com.gym.gym_ver2.domain.model.dto.AprendizRanking;
-import com.gym.gym_ver2.domain.model.dto.CodigoQRRequest;
-import com.gym.gym_ver2.domain.model.dto.FrecuenciaCardiacaRequest;
+import com.gym.gym_ver2.domain.model.dto.*;
 import com.gym.gym_ver2.domain.model.dto.responseDTO.ValidacionRutinaResponse;
 import com.gym.gym_ver2.domain.model.entity.Aprendiz;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
@@ -18,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,18 +84,27 @@ public class AdminController {
 
     @GetMapping("/listaAprendicesTop10")
     public ResponseEntity<Map<String, Object>> obtenerTop10Aprendices() {
-
         List<AprendizRanking> top20 = adminService.obtenerTop20Aprendices();
-
         Map<String, Object> response = new HashMap<>();
         response.put("status", "success");
         response.put("message", "Top 20 aprendices por puntaje acumulado");
         response.put("data", top20);
 
         return ResponseEntity.ok(response);
-
     }
 
-    
+    @GetMapping("/obtenerFrecuenciaCardiaca")
+    public ResponseEntity<Map<String, Object>> obtenerFrecuenciaCardiaca(@AuthenticationPrincipal Usuario usuario) {
+        int idPersona = usuario.getPersona().getIdPersona();
+        FrecuenciaAprendizDTO frecuenciaAprendiz = adminService.obtenerFrecuenciaCardiaca(idPersona);
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("message", "Frecuencia cardiaca del aprendiz");
+        response.put("data", Map.of(
+                "idAprendiz", frecuenciaAprendiz.getIdAprendiz(),
+                "frecuenciaCardiaca", frecuenciaAprendiz.getFrecuenciaCardiaca()
+        ));
+        return ResponseEntity.ok(response);
+    }
 
 }

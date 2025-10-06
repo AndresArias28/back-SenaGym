@@ -2,6 +2,7 @@ package com.gym.gym_ver2.aplicaction.service;
 
 import com.gym.gym_ver2.domain.model.dto.AdminDTO;
 import com.gym.gym_ver2.domain.model.dto.AprendizRanking;
+import com.gym.gym_ver2.domain.model.dto.FrecuenciaAprendizDTO;
 import com.gym.gym_ver2.domain.model.dto.FrecuenciaCardiacaRequest;
 import com.gym.gym_ver2.domain.model.dto.responseDTO.ValidacionRutinaResponse;
 import com.gym.gym_ver2.domain.model.entity.*;
@@ -191,10 +192,20 @@ public class AdminServiceImpl implements  AdminService {
                 a.getIdPersona(),
                 a.getNombres(),
                 a.getApellidos(),
-                a.getPuntosAcumulados(),
-                a.getHorasAcumuladas()
+                a.getHorasAcumuladas(),
+                a.getPuntosAcumulados()
         )).toList();
-
     }
+
+    @Override
+    public FrecuenciaAprendizDTO obtenerFrecuenciaCardiaca(int idPersona) {
+        Aprendiz aprendiz = aprendizRepository.findById(idPersona)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Aprendiz no encontrado"));
+        return new FrecuenciaAprendizDTO(
+                aprendiz.getIdPersona(),
+                Optional.ofNullable(aprendiz.getFrecuenciaCardiaca()).orElse(0)
+        );
+    }
+
 
 }
