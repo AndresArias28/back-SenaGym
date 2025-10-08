@@ -7,11 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface AprendizRepository extends JpaRepository<Aprendiz, Integer> {
+public interface    AprendizRepository extends JpaRepository<Aprendiz, Integer> {
     List<Aprendiz> findTop20ByOrderByPuntosAcumuladosDesc();
 
     @Query("""
         SELECT  new com.gym.gym_ver2.domain.model.dto.AprendicesDashDTO(
+            p.idPersona,
             CONCAT(p.nombres, ' ',p.apellidos),
             apre.ficha,
             apre.nivelFisico,
