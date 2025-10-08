@@ -6,6 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AprendicesDashDTO {
+    private Integer id;
     private String nombre;
     private Integer ficha;
     private String nivel;
