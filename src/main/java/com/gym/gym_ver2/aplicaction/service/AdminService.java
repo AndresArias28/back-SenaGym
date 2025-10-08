@@ -1,6 +1,7 @@
 package com.gym.gym_ver2.aplicaction.service;
 
 import com.gym.gym_ver2.domain.model.dto.AdminDTO;
+import com.gym.gym_ver2.domain.model.dto.AprendicesDashDTO;
 import com.gym.gym_ver2.domain.model.dto.AprendizRanking;
 import com.gym.gym_ver2.domain.model.dto.FrecuenciaAprendizDTO;
 import com.gym.gym_ver2.domain.model.dto.responseDTO.ValidacionRutinaResponse;
@@ -26,4 +27,6 @@ public interface  AdminService {
 
 
     FrecuenciaAprendizDTO obtenerFrecuenciaCardiaca(int idPersona);
+
+    List<AprendicesDashDTO> getAprendicesDash();
 }

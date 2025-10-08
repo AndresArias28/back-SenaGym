@@ -1,9 +1,9 @@
 package com.gym.gym_ver2.aplicaction.service;
 
 import com.gym.gym_ver2.domain.model.dto.AdminDTO;
+import com.gym.gym_ver2.domain.model.dto.AprendicesDashDTO;
 import com.gym.gym_ver2.domain.model.dto.AprendizRanking;
 import com.gym.gym_ver2.domain.model.dto.FrecuenciaAprendizDTO;
-import com.gym.gym_ver2.domain.model.dto.FrecuenciaCardiacaRequest;
 import com.gym.gym_ver2.domain.model.dto.responseDTO.ValidacionRutinaResponse;
 import com.gym.gym_ver2.domain.model.entity.*;
 import com.gym.gym_ver2.domain.model.requestModels.RegisterAdminRequest;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -205,6 +204,13 @@ public class AdminServiceImpl implements  AdminService {
                 aprendiz.getIdPersona(),
                 Optional.ofNullable(aprendiz.getFrecuenciaCardiaca()).orElse(0)
         );
+    }
+
+    @Override
+    public List<AprendicesDashDTO> getAprendicesDash(){
+        List<AprendicesDashDTO> aprendices = aprendizRepository.obtenerAprendicesParaDashboard();
+        return  aprendices;
+
     }
 
 
