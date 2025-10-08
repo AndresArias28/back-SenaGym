@@ -107,4 +107,14 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/dashboard/listAprendices")
+    public ResponseEntity<Map<String, Object>> getAprendicesDash() {
+        List<AprendicesDashDTO> aprendicesDashDTO = adminService.getAprendicesDash();
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("message", "Lista de aprendices para el dashboard");
+        response.put("data", aprendicesDashDTO);
+        return ResponseEntity.ok(response);
+    }
+
 }
