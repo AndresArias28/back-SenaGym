@@ -103,14 +103,13 @@ public class AdminServiceImpl implements  AdminService {
                 .average()
                 .orElseThrow(() -> new IllegalStateException("No se encontraron ejercicios con METS válidos"));
 
-        // 6. Calcular duración total en minutos
+        // 6. Calcular total en minutos
         long duracionTotalSegundos = ejercicios.stream()
                 .mapToLong(ej -> ej.getSeries() * ej.getDuracion()) // duracion en seg por serie
                 .sum();
 
         double duracionTotalMinutos = duracionTotalSegundos / 60.0;
 
-        // 7. Calcular calorías
         double calorias = (promedioMets * 3.5 * pesoKg * duracionTotalMinutos) / 200.0;
 
         String dif = Optional.ofNullable(rutina.getDificultad()).orElse(rutina.getDificultad()).toString();
@@ -123,18 +122,19 @@ public class AdminServiceImpl implements  AdminService {
             case "PRINCIPIANTE" -> puntosGanados = 50;
             case "INTERMEDIO"   -> puntosGanados = 75;
             case "AVANZADO"     -> puntosGanados = 100;
-            default             -> puntosGanados = 50;
+            default             -> puntosGanados = 0;
         }
 
         int puntosPrevios = Optional.ofNullable(aprendiz.getPuntosAcumulados()).orElse(0);
         int horasPrevias  = Optional.ofNullable(aprendiz.getHorasAcumuladas()).orElse(0);
 
         int puntosTotales = puntosPrevios + puntosGanados;
-        int horasActualizadas  = horasPrevias;
 
-        if (puntosTotales >= 300) {
-            horasActualizadas  += 1;
-        }
+        // Cada 100 puntos = 1 hora
+        int horasPorPuntos = puntosTotales / 100;
+
+        // Solo sumamos si hay nuevas horas adicionales
+        int horasActualizadas = Math.max(horasPrevias, horasPorPuntos);
 
         desafioRealizado.setPuntosObtenidos(puntosGanados);
         desafioRealizado.setCaloriasTotales(calorias);

@@ -25,7 +25,7 @@ public class AsignacionRutinaController {
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaAsignacion);
     }
 
-    @GetMapping("/rutina/{idPersona}")//todo: arreglar esta parte a listas
+    @GetMapping("/rutina/{idPersona}")
     public ResponseEntity<List<AsignacionResponse>> obtenerRutinaPorPersona(@PathVariable Integer idPersona) {
         List<AsignacionResponse> asignaciones = asignacionRutinaService.obtenerRutinaPorPersona(idPersona);
         return ResponseEntity.ok(asignaciones);
