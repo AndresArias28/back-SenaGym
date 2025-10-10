@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AsignacionesResponse {
     private String nombreAprendiz;
+    private Integer idPersona;
     private Integer ficha;
     private LocalDateTime fechaCreacion;
     private String nivelFisico;
