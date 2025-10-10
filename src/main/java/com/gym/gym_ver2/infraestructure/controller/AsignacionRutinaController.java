@@ -37,4 +37,15 @@ public class AsignacionRutinaController {
         List<AsignacionesResponse> asignaciones = asignacionRutinaService.obtenerAllAsignaciones();
         return ResponseEntity.ok(asignaciones);
     }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PutMapping("/actualizar/{idAsignacion}")
+    public ResponseEntity <AsignacionResponse> actualizarAsignacion(
+            @PathVariable Integer idAsignacion,
+            @RequestBody AsignacionRutinaDTO dto) {
+
+            AsignacionResponse asignacionActualizada = asignacionRutinaService.actualizarAsignacion(idAsignacion, dto);
+            return ResponseEntity.ok(asignacionActualizada);
+
+    }
 }
