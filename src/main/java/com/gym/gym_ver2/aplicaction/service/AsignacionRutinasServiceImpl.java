@@ -86,4 +86,39 @@ public class AsignacionRutinasServiceImpl implements  AsignacionRutinaService{
     public List<AsignacionesResponse> obtenerAllAsignaciones() {
         return asignacionRutinaRepository.listarAsignacionesConAprendiz();
     }
+
+    @Override
+    @Transactional
+    public AsignacionResponse actualizarAsignacion(Integer idAsignacion, AsignacionRutinaDTO dto) {
+        AsignacionRutina asignacion = asignacionRutinaRepository.findById(idAsignacion)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Asignación no encontrada con ID: " + idAsignacion));
+
+        asignacion.setObservaciones(dto.getObservaciones());
+
+            if (dto.getIdRutina() == null) {
+                asignacion.setRutina(null);
+                asignacion.setFechaFinalizacion(LocalDateTime.now());
+            }else{
+            Rutina rutina = rutinaRepository.findById(dto.getIdRutina())
+                    .orElseThrow(() -> new RecursoNoEncontradoException("Rutina no encontrada con ID: " + dto.getIdRutina()));
+            asignacion.setRutina(rutina);
+            asignacion.setFechaFinalizacion(null);
+        }
+
+        // 🔹 Si quieres, puedes también actualizar el día asignado
+        if (dto.getDiasAsignado() != null) {
+            asignacion.setDiaAsignado(dto.getDiasAsignado());
+        }
+
+        asignacionRutinaRepository.save(asignacion);
+
+        return AsignacionResponse.builder().idAsignacion(asignacion.getIdAsignacionRutina())
+                .idPersona(asignacion.getAprendiz().getIdPersona())
+                .idRutina(asignacion.getRutina() != null ? asignacion.getRutina().getIdRutina() : null)
+                .observaciones(asignacion.getObservaciones())
+                .fechaAsignacion(asignacion.getFechaAsignacion())
+                .diasAsignado(asignacion.getDiaAsignado())
+                .fechaFinalizacion(asignacion.getFechaFinalizacion())
+                .build();
+    }
 }
