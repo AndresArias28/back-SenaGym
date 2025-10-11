@@ -48,4 +48,12 @@ public class AsignacionRutinaController {
             return ResponseEntity.ok(asignacionActualizada);
 
     }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping("/crear")
+    public ResponseEntity<AsignacionResponse> crearAsignacion(@RequestBody AsignacionRutinaDTO dto) {
+            AsignacionResponse nuevaAsignacion = asignacionRutinaService.crearAsignacion(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaAsignacion);
+    }
+
 }

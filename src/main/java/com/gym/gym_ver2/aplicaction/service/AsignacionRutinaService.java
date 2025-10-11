@@ -14,4 +14,6 @@ public interface AsignacionRutinaService {
     List<AsignacionesResponse> obtenerAllAsignaciones();
 
     AsignacionResponse actualizarAsignacion(Integer idAsignacion, AsignacionRutinaDTO dto);
+
+    AsignacionResponse crearAsignacion(AsignacionRutinaDTO dto);
 }
