@@ -15,5 +15,4 @@ public interface AsignacionRutinaService {
 
     AsignacionResponse actualizarAsignacion(Integer idAsignacion, AsignacionRutinaDTO dto);
 
-    AsignacionResponse crearAsignacion(AsignacionRutinaDTO dto);
 }

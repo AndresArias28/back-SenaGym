@@ -122,41 +122,4 @@ public class AsignacionRutinasServiceImpl implements  AsignacionRutinaService{
                 .build();
     }
 
-    @Override
-    @Transactional
-    public AsignacionResponse crearAsignacion(AsignacionRutinaDTO dto) {
-        if(dto.getIdPersona() == null){
-            throw new RecursoNoEncontradoException("El ID del aprendiz no puede ser nulo");
-        }
-
-        Aprendiz aprendiz = aprendizRepository.findById(dto.getIdPersona())
-                .orElseThrow(() -> new RecursoNoEncontradoException("Aprendiz no encontrado con ID: " + dto.getIdPersona()));
-
-        Rutina rutina = null;
-        if(dto.getIdRutina() != null){
-            rutina = rutinaRepository.findById(dto.getIdRutina())
-                    .orElseThrow(() -> new RecursoNoEncontradoException("Rutina no encontrada con ID: " + dto.getIdRutina()));
-        }
-
-        AsignacionRutina asignacion = AsignacionRutina.builder()
-                .aprendiz(aprendiz)
-                .rutina(rutina)
-                .observaciones(dto.getObservaciones())
-                .fechaAsignacion(LocalDateTime.now())
-                .fechaFinalizacion(null)
-                .diaAsignado(dto.getDiasAsignado())
-                .build();
-
-        asignacionRutinaRepository.save(asignacion);
-
-        return AsignacionResponse.builder()
-                .idAsignacion(asignacion.getIdAsignacionRutina())
-                .idPersona(aprendiz.getIdPersona())
-                .idRutina(rutina != null ? rutina.getIdRutina() : null)
-                .observaciones(asignacion.getObservaciones())
-                .fechaAsignacion(asignacion.getFechaAsignacion())
-                .diasAsignado(asignacion.getDiaAsignado())
-                .fechaFinalizacion(asignacion.getFechaFinalizacion())
-                .build();
-    }
 }
