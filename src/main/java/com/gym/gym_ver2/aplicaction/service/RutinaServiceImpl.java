@@ -209,7 +209,7 @@ public class RutinaServiceImpl implements  RutinaService {
 
     @Transactional
     @Override
-    public RutinaDTO actualizarRutina(Integer id, RutinaCreateDTO rutinaDTO) throws IOException {
+    public RutinaDTO actualizarRutina(Integer id, RutinaCreateDTO rutinaDTO) throws IOException {//todo: AGREGAR LA FOTO DE CADA AJERCICIO EN AL LA RESPUESTA
 
         String imageUrl = null;
         String imagePublicId = null;

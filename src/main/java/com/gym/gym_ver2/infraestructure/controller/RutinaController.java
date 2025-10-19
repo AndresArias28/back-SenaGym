@@ -110,8 +110,12 @@ public class RutinaController {
 
     @PostMapping("/generar")
     public ResponseEntity<?> generarRutina(@RequestBody SolicitudRutinaDTO datos) {
-        String rutina = rutinaService.generarRutinaConIA(datos);
-        return ResponseEntity.ok(rutina);
+        try {
+            String resultado = rutinaService.generarRutinaConIA(datos);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al generar rutina");
+        }
     }
 
     @GetMapping("/porAprendiz")

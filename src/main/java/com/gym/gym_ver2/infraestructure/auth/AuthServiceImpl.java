@@ -51,8 +51,6 @@ public class AuthServiceImpl implements  AuthService {
 
     public AuthResponse login(LoginRequest rq) {
 
-        System.out.println("⏩ Iniciando proceso de login...");
-
         if (rq.getEmailUsuario() == null || rq.getEmailUsuario().isEmpty()) {
 
             throw new RecursoNoEncontradoException("El email no puede estar vacío");

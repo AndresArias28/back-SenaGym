@@ -46,6 +46,4 @@ public class Aprendiz extends Persona {
 
     @Column(name = "frecuencia_cardiaca")
     private Integer frecuenciaCardiaca;
-
-
 }

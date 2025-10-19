@@ -1,6 +1,5 @@
 package com.gym.gym_ver2.aplicaction.service;
 
-import com.gym.gym_ver2.domain.model.dto.DesafioDeUsuario;
 import com.gym.gym_ver2.domain.model.dto.DesafioRealizadoDao;
 import com.gym.gym_ver2.domain.model.dto.DesafiosUsuarioDAO;
 import com.gym.gym_ver2.domain.model.dto.responseDTO.DesafiosDeUsuarios;

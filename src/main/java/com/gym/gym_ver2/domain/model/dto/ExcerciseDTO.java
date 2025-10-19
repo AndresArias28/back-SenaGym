@@ -12,4 +12,12 @@ public class ExcerciseDTO {
         private String descripcionEjercicio;
         private String musculos;
         private Double met;
+
+        //crear construtcor con 4 paraemtros
+        public ExcerciseDTO( String nombreEjercicio, String descripcionEjercicio, String musculos, Double met) {
+            this.nombreEjercicio = nombreEjercicio;
+            this.descripcionEjercicio = descripcionEjercicio;
+            this.musculos = musculos;
+            this.met = met;
+        }
 }

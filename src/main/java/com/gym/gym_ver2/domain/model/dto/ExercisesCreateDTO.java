@@ -18,4 +18,13 @@ public class ExercisesCreateDTO {
     private MultipartFile fotoEjercicio;
     private Double met;
 
+    //crear construtcor con 5 paraemtros> "Ejercicio Actualizado", "Descripción Actualizada", null, "Músculos Actualizados", 7.0
+    public ExercisesCreateDTO( String nombreEjercicio, String descripcionEjercicio, MultipartFile fotoEjercicio, String musculos, Double met) {
+        this.nombreEjercicio = nombreEjercicio;
+        this.descripcionEjercicio = descripcionEjercicio;
+        this.fotoEjercicio = fotoEjercicio;
+        this.musculos = musculos;
+        this.met = met;
+    }
+
 }
