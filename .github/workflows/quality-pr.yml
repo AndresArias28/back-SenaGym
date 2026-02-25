@@ -1,0 +1,45 @@
+name: quality-pr
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  pr-gate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Lint and format check
+        run: mvn -q spotless:check
+
+      - name: Unit tests
+        run: mvn -q test
+
+      - name: Dependency scan
+        run: mvn -q org.owasp:dependency-check-maven:check
+
+      - name: Gitleaks secret scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-reports
+          path: |
+            target/surefire-reports/**
+            target/site/jacoco/**
+            target/dependency-check-report.*
+            target/dependency-check-report/**

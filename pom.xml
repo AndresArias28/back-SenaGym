@@ -85,8 +85,6 @@
 			<groupId>jakarta.validation</groupId>
 			<artifactId>jakarta.validation-api</artifactId>
 		</dependency>
-
-
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
@@ -168,6 +166,37 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>com.diffplug.spotless</groupId>
+				<artifactId>spotless-maven-plugin</artifactId>
+				<version>2.43.0</version>
+				<configuration>
+					<java>
+						<googleJavaFormat/>
+						<removeUnusedImports/>
+						<trimTrailingWhitespace/>
+						<endWithNewline/>
+					</java>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<phase>verify</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>10.0.4</version>
+				<configuration>
+					<format>ALL</format>
+					<failBuildOnCVSS>8</failBuildOnCVSS>
+					<suppressionFile>${project.basedir}/security/dependency-check-suppressions.xml</suppressionFile>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
