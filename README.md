@@ -1,4 +1,4 @@
-# 🏋️‍♂️ Gym SENA – Backend (Spring Boot)
+# 🏋️‍♂️ Gym – Backend (Spring Boot)
 
 Este es el **backend** del sistema Gym SENA (**HealthU**), desarrollado con **Spring Boot** y arquitectura por capas para gestionar usuarios, rutinas, desafíos y autenticación.
 
